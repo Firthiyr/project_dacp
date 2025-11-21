@@ -1,0 +1,83 @@
+<div id="filter-backdrop" class="fixed inset-0 bg-black/50 z-50 transition-opacity" onclick="closeFilters()"></div>
+
+<div id="filter-panel" class="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-2xl z-50 transform transition-transform duration-300 animate__animated animate__slideInRight overflow-y-auto">
+    
+    <div class="flex justify-between items-center p-6 border-b border-gray-100">
+        <h2 class="text-xl font-heading font-bold tracking-tight text-dark uppercase">Filters</h2>
+        <button class="text-gray-400 hover:text-primary transition-colors text-2xl" onclick="closeFilters()">
+            &times;
+        </button>
+    </div>
+
+    <form class="p-6 space-y-8" 
+          hx-get="{% if current_category %}{% url 'main:catalog' current_category.slug %}{% else %}{% url 'main:catalog_all' %}{% endif %}" 
+          hx-target="#main-content" 
+          hx-push-url="true"
+          hx-on::after-request="closeFilters()">
+        
+        <input type="hidden" name="q" value="{{ filter_params.q|default:'' }}">
+        
+        <div>
+            <h3 class="text-sm font-bold text-dark uppercase mb-3">Color</h3>
+            <div class="relative">
+                <input type="text" 
+                       name="color" 
+                       value="{{ filter_params.color|default:'' }}" 
+                       placeholder="e.g. Red, Black..."
+                       class="w-full border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-primary transition-colors">
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-sm font-bold text-dark uppercase mb-3">Price Range</h3>
+            <div class="flex items-center gap-4">
+                <input type="number" name="min_price" value="{{ filter_params.min_price|default:'' }}" placeholder="Min" 
+                       class="w-1/2 border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-primary">
+                <span class="text-gray-400">-</span>
+                <input type="number" name="max_price" value="{{ filter_params.max_price|default:'' }}" placeholder="Max" 
+                       class="w-1/2 border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-primary">
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-sm font-bold text-dark uppercase mb-3">Size</h3>
+            <div class="grid grid-cols-3 gap-2">
+                <label class="cursor-pointer">
+                    <input type="radio" name="size" value="" class="peer sr-only" {% if not filter_params.size %}checked{% endif %}>
+                    <div class="py-2 text-center border border-gray-200 text-xs uppercase peer-checked:bg-dark peer-checked:text-white peer-checked:border-dark hover:border-primary transition-all">
+                        All
+                    </div>
+                </label>
+                {% for size in sizes %}
+                <label class="cursor-pointer">
+                    <input type="radio" name="size" value="{{ size.name }}" class="peer sr-only" {% if filter_params.size == size.name %}checked{% endif %}>
+                    <div class="py-2 text-center border border-gray-200 text-xs uppercase peer-checked:bg-dark peer-checked:text-white peer-checked:border-dark hover:border-primary transition-all">
+                        {{ size.name }}
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="pt-6 border-t border-gray-100 flex gap-4">
+            <button type="button" 
+                    class="w-1/2 border border-gray-300 py-3 text-sm font-bold uppercase hover:bg-gray-50 transition-colors"
+                    onclick="closeFilters()">
+                Cancel
+            </button>
+            <button type="submit" 
+                    class="w-1/2 bg-primary text-white py-3 text-sm font-bold uppercase hover:bg-dark transition-colors">
+                Apply
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function closeFilters() {
+        const modal = document.getElementById('filter-modal-container');
+        if (modal) {
+            modal.innerHTML = ''; // Очистка контейнера, скрывая модалку
+        }
+    }
+</script>

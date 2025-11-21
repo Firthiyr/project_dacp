@@ -1,0 +1,7 @@
+<button id="search-trigger" 
+        hx-get="{% url 'main:catalog_all' %}?show_search=true" 
+        hx-target="#search-wrapper" 
+        hx-swap="innerHTML transition:true"
+        class="text-gray-400 hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-800">
+    <i class="fa fa-search"></i>
+</button>

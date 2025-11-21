@@ -1,19 +1,17 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, DetailView
-from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.db.models import Q
 from .models import Category, Product, Size
 
 
-# Create your views here.
 class IndexView(TemplateView):
     template_name = "main/base.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["categories"] = Category.objects.all()
-        context["current_category"] = None
+        context["new_arrivals"] = Product.objects.all().order_by("-created_at")[:4]
         return context
 
     def get(self, request, *args, **kwargs):
@@ -24,12 +22,13 @@ class IndexView(TemplateView):
 
 
 class CatalogView(TemplateView):
-    template_name = "main/base.html"
+    template_name = "main/catalog.html"
+
     FILTER_MAPPING = {
         "color": lambda queryset, value: queryset.filter(color__iexact=value),
         "min_price": lambda queryset, value: queryset.filter(price__gte=value),
         "max_price": lambda queryset, value: queryset.filter(price__lte=value),
-        "size": lambda queryset, value: queryset.filter(product_size__size__name=value),
+        "size": lambda queryset, value: queryset.filter(sizes__size__name=value),
     }
 
     def get_context_data(self, **kwargs):
@@ -53,7 +52,7 @@ class CatalogView(TemplateView):
         for param, filter_func in self.FILTER_MAPPING.items():
             value = self.request.GET.get(param)
             if value:
-                products = filter_func(products, value)
+                products = filter_func(products, value).distinct()
                 filter_params[param] = value
             else:
                 filter_params[param] = ""
@@ -64,45 +63,45 @@ class CatalogView(TemplateView):
             {
                 "categories": categories,
                 "products": products,
-                "current_category": current_category or category_slug,
+                "current_category": current_category,
                 "filter_params": filter_params,
                 "sizes": Size.objects.all(),
                 "search_query": query or "",
             }
         )
 
+        # Для HTMX рендеринга
         if self.request.GET.get("show_search") == "true":
             context["show_search"] = True
-        elif self.request.GET.get("show_search") == "false":
+        elif self.request.GET.get("reset_search") == "true":
             context["reset_search"] = True
+        if self.request.headers.get("Hx-Request"):
+            context["is_htmx"] = True
 
         return context
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
+
         if request.headers.get("Hx-Request"):
             if context.get("show_search"):
                 return TemplateResponse(request, "main/search_input.html", context)
             elif context.get("reset_search"):
                 return TemplateResponse(request, "main/search_button.html", {})
-            template = (
-                "main/filter_modal.html"
-                if request.GET.get("show_filters") == "true"
-                else "main/catalog.html"
-            )
-            return TemplateResponse(request, template, context)
+            elif request.GET.get("show_filters") == "true":
+                return TemplateResponse(request, "main/filter_modal.html", context)
+
+            # Чтоб не повторять шапку (хедер\футер) из-за пробелмы дубляжа в каталоге, возврат пустой шаблон бейс"
+            context["base_template"] = "main/base_htmx.html"
+
+            return TemplateResponse(request, self.template_name, context)
+
         return TemplateResponse(request, self.template_name, context)
 
 
 class ProductDetailView(DetailView):
     model = Product
-    template_name = "main/base.html"
-    slug_field = "slug"
-
-
-class ProductDetailView(DetailView):
-    model = Product
-    template_name = "main/base.html"
+    template_name = "main/product_detail.html"
     slug_field = "slug"
     slug_url_kwarg = "slug"
 
@@ -112,7 +111,7 @@ class ProductDetailView(DetailView):
         context["categories"] = Category.objects.all()
         context["related_products"] = Product.objects.filter(
             category=product.category
-        ).exclude(id=product.id)[:5]
+        ).exclude(id=product.id)[:4]
         context["current_category"] = product.category
         return context
 
@@ -120,5 +119,5 @@ class ProductDetailView(DetailView):
         self.object = self.get_object()
         context = self.get_context_data(**kwargs)
         if request.headers.get("Hx-Request"):
-            return TemplateResponse(request, "main/product_detail.html", context)
+            return TemplateResponse(request, self.template_name, context)
         return TemplateResponse(request, self.template_name, context)

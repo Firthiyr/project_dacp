@@ -1,0 +1,166 @@
+{% extends base_template|default:'main/base.html' %}
+{% load static %}
+
+{% block title %}Catalog - Poseify{% endblock %}
+
+{% block content %}
+    <div class="relative bg-dark py-24 mb-12 bg-cover bg-center" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{% static "img/carousel-1.jpg" %}');">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-5xl font-heading font-bold text-white uppercase mb-4 animate__animated animate__slideInDown">
+                Our Collection
+            </h1>
+            <nav aria-label="breadcrumb" class="animate__animated animate__slideInDown">
+                <ol class="flex justify-center space-x-2 text-sm text-gray-400 uppercase tracking-wider">
+                    <li><a href="{% url 'main:index' %}" class="text-white hover:text-primary transition-colors">Home</a></li>
+                    <li><span class="text-gray-500">/</span></li>
+                    <li><a href="{% url 'main:catalog_all' %}" class="text-white hover:text-primary transition-colors">Pages</a></li>
+                    <li><span class="text-gray-500">/</span></li>
+                    <li class="text-primary font-semibold" aria-current="page">Catalog</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="container mx-auto px-4 pb-24">
+        <div class="flex flex-col lg:flex-row gap-12">
+            
+            <aside class="w-full lg:w-1/4 space-y-8">
+                
+                <div class="bg-white p-6 shadow-sm border border-gray-100">
+                    <h4 class="font-heading font-bold text-xl mb-4 uppercase">Search</h4>
+                    <form action="{% url 'main:catalog_all' %}" method="get" class="relative">
+                        <input type="text" name="q" value="{{ search_query }}" placeholder="Keyword..." class="w-full bg-gray-50 border border-gray-200 p-3 pr-10 focus:outline-none focus:border-primary transition-colors">
+                        <button type="submit" class="absolute right-3 top-3.5 text-gray-400 hover:text-primary">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm border border-gray-100">
+                    <h4 class="font-heading font-bold text-xl mb-4 uppercase">Categories</h4>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="{% url 'main:catalog_all' %}" class="flex justify-between items-center group {% if not current_category %}text-primary font-bold{% else %}text-gray-600{% endif %}">
+                                <span class="group-hover:text-primary transition-colors">All Products</span>
+                            </a>
+                        </li>
+                        {% for category in categories %}
+                        <li>
+                            <a href="{% url 'main:catalog' category.slug %}" class="flex justify-between items-center group {% if current_category.slug == category.slug %}text-primary font-bold{% else %}text-gray-600{% endif %}">
+                                <span class="group-hover:text-primary transition-colors">{{ category.name }}</span>
+                                <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{ category.products.count }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm border border-gray-100">
+                    <h4 class="font-heading font-bold text-xl mb-4 uppercase">Filter by Price</h4>
+                    <form action="." method="get">
+                        {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+                        
+                        <div class="flex items-center space-x-2 mb-4">
+                            <input type="number" name="min_price" placeholder="Min" class="w-1/2 p-2 border border-gray-200 text-sm focus:border-primary outline-none">
+                            <span class="text-gray-400">-</span>
+                            <input type="number" name="max_price" placeholder="Max" class="w-1/2 p-2 border border-gray-200 text-sm focus:border-primary outline-none">
+                        </div>
+                        <button type="submit" class="w-full bg-dark text-white py-2 text-sm uppercase hover:bg-primary transition-colors">Apply</button>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm border border-gray-100">
+                    <h4 class="font-heading font-bold text-xl mb-4 uppercase">Sizes</h4>
+                    <div class="flex flex-wrap gap-2">
+                        {% for size in sizes %}
+                        <a href="?size={{ size.name }}" class="px-3 py-1 border border-gray-200 text-sm text-gray-600 hover:border-primary hover:text-primary transition-colors">
+                            {{ size.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </aside>
+            <div class="w-full lg:w-3/4">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 pb-4 border-b border-gray-200">
+                    <p class="text-gray-500 mb-4 sm:mb-0">Showing all results</p>
+                    <div class="flex items-center">
+                                            <button hx-get="{% url 'main:catalog_all' %}?show_filters=true" 
+                    hx-target="#filter-modal-container" 
+                    hx-swap="innerHTML"
+                    class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 uppercase text-sm font-bold hover:border-primary transition-colors">
+                    <i class="fa fa-sliders"></i> Filter
+                    </button>
+                        <select class="border border-gray-200 p-2 text-sm focus:outline-none focus:border-primary cursor-pointer bg-white">
+                            <option value="newest">Sort by: Newest</option>
+                            <option value="price_low">Price: Low to High</option>
+                            <option value="price_high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    
+                    {% for product in products %}
+                    <div class="group bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="relative overflow-hidden aspect-[3/4] bg-gray-100">
+                            {% if product.main_image %}
+                            <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-200">No Image</div>
+                            {% endif %}
+                            
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                                <a href="{% url 'main:product_detail' product.slug %}" class="w-10 h-10 bg-white text-dark rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75" title="View Details">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <button class="w-10 h-10 bg-white text-dark rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100" title="Add to Cart">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-2 py-1 uppercase tracking-wider">
+                                {{ product.category.name }}
+                            </div>
+                        </div>
+
+                        <div class="p-6 text-center relative bg-white">
+                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rotate-45 border-t border-l border-gray-100 z-10"></div>
+                            
+                            <h5 class="font-heading font-bold text-lg text-dark uppercase mb-2 group-hover:text-primary transition-colors">
+                                <a href="{% url 'main:product_detail' product.slug %}">{{ product.name }}</a>
+                            </h5>
+                            
+                            <div class="flex justify-center items-center gap-2 mb-3">
+                                <span class="text-primary font-bold text-xl">${{ product.price }}</span>
+                                </div>
+
+                            <p class="text-sm text-gray-500">
+                                Color: <span class="text-dark">{{ product.color }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full text-center py-12">
+                        <h3 class="text-2xl font-heading font-bold text-gray-400">No products found</h3>
+                        <p class="text-gray-500 mt-2">Try adjusting your search or filter to find what you're looking for.</p>
+                        <a href="{% url 'main:catalog_all' %}" class="mt-4 inline-block text-primary hover:underline">Clear Filters</a>
+                    </div>
+                    {% endfor %}
+
+                </div>
+                
+                {% if is_paginated %}
+                <div class="flex justify-center mt-12 space-x-2">
+                    <a href="#" class="w-10 h-10 border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"><i class="fa fa-angle-left"></i></a>
+                    <a href="#" class="w-10 h-10 bg-primary text-white flex items-center justify-center font-bold">1</a>
+                    <a href="#" class="w-10 h-10 border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">2</a>
+                    <a href="#" class="w-10 h-10 border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">3</a>
+                    <a href="#" class="w-10 h-10 border border-gray-300 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"><i class="fa fa-angle-right"></i></a>
+                </div>
+                {% endif %}
+
+            </div>
+            </div>
+    </div>
+    {% endblock %}
