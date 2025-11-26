@@ -1,0 +1,61 @@
+<li class="flex py-6 transition-opacity duration-300" id="cart-item-{{ item.id }}">
+    <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-100">
+        {% if item.product.main_image %}
+            <img src="{{ item.product.main_image.url }}" 
+                 alt="{{ item.product.name }}" 
+                 class="h-full w-full object-cover object-center">
+        {% else %}
+            <div class="h-full w-full flex items-center justify-center text-gray-400 text-xs">
+                No Img
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="ml-4 flex flex-1 flex-col">
+        <div>
+            <div class="flex justify-between text-base font-medium text-dark font-heading">
+                <h3>
+                    <a href="{% url 'main:product_detail' item.product.slug %}" class="hover:text-primary transition-colors">
+                        {{ item.product.name }}
+                    </a>
+                </h3>
+                <p class="ml-4 font-bold text-dark">${{ item.total_price }}</p>
+            </div>
+            <p class="mt-1 text-sm text-gray-500">Size: {{ item.product_size.size.name }}</p>
+        </div>
+        
+        <div class="flex flex-1 items-end justify-between text-sm">
+            <div class="flex items-center border border-gray-300 rounded bg-white">
+                <button type="button" 
+                        class="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                        hx-post="{% url 'cart:update_item' item.id %}"
+                        hx-vals='{"quantity": "{{ item.quantity|add:-1 }}"}'
+                        hx-target="#cart-content"
+                        hx-swap="innerHTML"
+                        {% if item.quantity <= 1 %}disabled{% endif %}>
+                    −
+                </button>
+                
+                <span class="px-2 font-medium text-dark w-6 text-center">{{ item.quantity }}</span>
+                
+                <button type="button" 
+                        class="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                        hx-post="{% url 'cart:update_item' item.id %}"
+                        hx-vals='{"quantity": "{{ item.quantity|add:1 }}"}'
+                        hx-target="#cart-content"
+                        hx-swap="innerHTML"
+                        {% if item.quantity >= item.product_size.stock %}disabled{% endif %}>
+                    +
+                </button>
+            </div>
+
+            <button type="button" 
+                    class="font-medium text-red-500 hover:text-red-700 transition-colors underline"
+                    hx-post="{% url 'cart:remove_item' item.id %}"
+                    hx-target="#cart-content"
+                    hx-swap="innerHTML">
+                Remove
+            </button>
+        </div>
+    </div>
+</li>

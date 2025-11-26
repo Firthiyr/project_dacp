@@ -1,0 +1,26 @@
+{% load static %}
+
+<div id="cart-badge" hx-swap-oob="true" class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+    {{ cart.total_items }}
+</div>
+<div id="mobile-nav-badge" hx-swap-oob="true" class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+    {{ cart.total_items }}
+</div>
+
+<div class="flex h-full flex-col bg-white">
+    {% if cart.total_items > 0 %}
+        <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+            <ul role="list" class="-my-6 divide-y divide-gray-200">
+                {% for item in cart_items %}
+                    {% include 'cart/cart_item.html' %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-gray-50">
+            {% include 'cart/cart_summary.html' %}
+        </div>
+    {% else %}
+        {% include 'cart/cart_empty.html' %}
+    {% endif %}
+</div>

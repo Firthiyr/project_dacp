@@ -1,0 +1,245 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Poseify{% endblock %}
+
+{% block content %}
+    <div class="bg-gray-100 py-8 mb-12">
+        <div class="container mx-auto px-4">
+            <nav aria-label="breadcrumb">
+                <ol class="flex space-x-2 text-sm text-gray-500 uppercase tracking-wider">
+                    <li><a href="{% url 'main:index' %}" class="hover:text-primary transition-colors">Home</a></li>
+                    <li><span>/</span></li>
+                    <li><a href="{% url 'main:catalog_all' %}" class="hover:text-primary transition-colors">Catalog</a></li>
+                    <li><span>/</span></li>
+                    <li><a href="{% url 'main:catalog' product.category.slug %}" class="hover:text-primary transition-colors">{{ product.category.name }}</a></li>
+                    <li><span>/</span></li>
+                    <li class="text-dark font-semibold" aria-current="page">{{ product.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 pb-24" x-data="{ activeImage: '{{ product.main_image.url }}' }">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+            
+            <div class="space-y-4">
+                <div class="relative overflow-hidden bg-gray-100 aspect-[3/4] group">
+                    <img :src="activeImage" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                         alt="{{ product.name }}">
+                    
+                    <div class="absolute top-4 right-4">
+                        <button class="w-10 h-10 bg-white text-dark rounded-full shadow hover:bg-primary hover:text-white transition-colors flex items-center justify-center">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+
+                {% if product.images.all %}
+                <div class="flex space-x-4 overflow-x-auto pb-2">
+                    <button @click="activeImage = '{{ product.main_image.url }}'" 
+                            class="w-24 aspect-[3/4] flex-shrink-0 border-2 transition-colors overflow-hidden"
+                            :class="activeImage === '{{ product.main_image.url }}' ? 'border-primary' : 'border-transparent opacity-70 hover:opacity-100'">
+                        <img src="{{ product.main_image.url }}" class="w-full h-full object-cover" alt="Main">
+                    </button>
+
+                    {% for img in product.images.all %}
+                    <button @click="activeImage = '{{ img.image.url }}'" 
+                            class="w-24 aspect-[3/4] flex-shrink-0 border-2 transition-colors overflow-hidden"
+                            :class="activeImage === '{{ img.image.url }}' ? 'border-primary' : 'border-transparent opacity-70 hover:opacity-100'">
+                        <img src="{{ img.image.url }}" class="w-full h-full object-cover" alt="View {{ forloop.counter }}">
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="flex flex-col justify-center">
+                <span class="text-primary font-bold uppercase tracking-widest text-sm mb-2">{{ product.category.name }}</span>
+                <h1 class="text-4xl lg:text-5xl font-heading font-bold text-dark mb-4">{{ product.name }}</h1>
+                
+                <div class="flex items-center space-x-6 mb-6 border-b border-gray-200 pb-6">
+                    <span class="text-3xl font-bold text-dark">${{ product.price }}</span>
+                    
+                    <span class="text-sm px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                        In Stock
+                    </span>
+                </div>
+
+                <div class="mb-8 text-gray-600 leading-relaxed">
+                    {{ product.description|linebreaks }}
+                </div>
+
+                <div class="space-y-8">
+                    <div>
+                        <h5 class="font-heading font-bold text-dark uppercase mb-3">Color</h5>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-6 h-6 rounded-full border border-gray-300 shadow-sm" 
+                                  style="background-color: {{ product.color|default:'gray' }};" 
+                                  title="{{ product.color }}"></span>
+                            <span class="text-gray-600">{{ product.color }}</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <h5 class="font-heading font-bold text-dark uppercase">Select Size</h5>
+                            <a href="#" class="text-xs text-gray-400 hover:text-primary underline">Size Guide</a>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-3" id="size-container">
+                            {% for ps in product.product_sizes.all %} 
+                                {% if ps.stock > 0 %}
+                                    <label class="cursor-pointer relative group">
+                                        <input type="radio" name="size_id" value="{{ ps.id }}" class="peer sr-only size-radio">
+                                        <div class="w-12 h-12 flex items-center justify-center border border-gray-300 text-dark font-medium group-hover:border-primary peer-checked:bg-dark peer-checked:text-white peer-checked:border-dark transition-all shadow-sm">
+                                            {{ ps.size.name }}
+                                        </div>
+                                    </label>
+                                {% else %}
+                                    <div class="w-12 h-12 flex items-center justify-center border border-gray-100 bg-gray-50 text-gray-300 font-medium cursor-not-allowed relative overflow-hidden" title="Out of Stock">
+                                        {{ ps.size.name }}
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="w-full h-[1px] bg-gray-300 rotate-45"></div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% empty %}
+                                <p class="text-sm text-red-500">No sizes available.</p>
+                            {% endfor %}
+                        </div>
+                        <p id="size-error" class="text-red-500 text-sm mt-2 hidden">Please select a size first.</p>
+                    </div>
+
+                    <div class="flex space-x-4 pt-4">
+                        <div class="w-32">
+                            <input type="number" id="quantity" value="1" min="1" class="w-full h-12 border border-dark text-center font-bold focus:outline-none focus:bg-gray-50">
+                        </div>
+                        
+                        <button type="button" 
+                                onclick="addToCart()"
+                                class="flex-1 bg-primary text-white h-12 font-bold uppercase tracking-wider hover:bg-dark transition-colors duration-300 flex items-center justify-center space-x-2">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span>Add to Cart</span>
+                        </button>
+                        
+                        <button type="button" class="w-12 h-12 border border-gray-300 flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-500 transition-colors">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-gray-200 text-sm text-gray-500 space-y-2">
+                    <p><span class="font-bold text-dark">SKU:</span> #POS-{{ product.id }}</p>
+                    <p><span class="font-bold text-dark">Category:</span> {{ product.category.name }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <div class="bg-gray-50 py-24">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h5 class="text-primary font-bold uppercase tracking-widest mb-2">You May Also Like</h5>
+                <h2 class="text-4xl font-heading font-bold text-dark uppercase">Related Products</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for related in related_products %}
+                <div class="group bg-white shadow-sm hover:shadow-lg transition-shadow duration-300">
+                    <div class="relative overflow-hidden aspect-[3/4] bg-gray-200">
+                        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="{{ related.main_image.url }}" alt="{{ related.name }}">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <a href="{% url 'main:product_detail' related.slug %}" class="bg-white text-dark px-6 py-2 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h5 class="font-heading font-bold text-dark mb-1 truncate">
+                            <a href="{% url 'main:product_detail' related.slug %}" class="hover:text-primary transition-colors">{{ related.name }}</a>
+                        </h5>
+                        <p class="text-primary font-bold">${{ related.price }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        function addToCart() {
+            const productSlug = '{{ product.slug }}';
+            const quantityInput = document.getElementById('quantity');
+            const errorMsg = document.getElementById('size-error');
+            
+            // Находим выбранную радиокнопку
+            const selectedRadio = document.querySelector('input[name="size_id"]:checked');
+            
+            // Сброс ошибки
+            errorMsg.classList.add('hidden');
+    
+            // Проверка на выбор размера
+            if (!selectedRadio) {
+                errorMsg.classList.remove('hidden');
+                // Анимация тряски для привлечения внимания (опционально)
+                return;
+            }
+    
+            const sizeId = selectedRadio.value;
+            const quantity = quantityInput.value;
+    
+            let formData = new FormData();
+            formData.append('size_id', sizeId);
+            formData.append('quantity', quantity);
+    
+            // URL для добавления (замените PLACEHOLDER на реальный slug)
+            fetch(`{% url 'cart:add_to_cart' product.slug %}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'HX-Request': 'true' // Говорим серверу, что это AJAX (хотя мы обрабатываем JSON)
+                }
+            })
+            .then(response => {
+                // Если сервер сделал редирект (обычно при HTMX), следуем за ним
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    // Показываем ошибку (можно через алерт или тост)
+                    alert(data.error); 
+                } else {
+                    // 1. Показываем уведомление (Toast) через глобальное событие
+                    window.dispatchEvent(new CustomEvent('show-notification', { 
+                        detail: data.message || "Added to cart!" 
+                    }));
+    
+                    // 2. Обновляем содержимое корзины через HTMX запрос
+                    htmx.ajax('GET', '{% url "cart:cart_modal" %}', {
+                        target: '#cart-content',
+                        swap: 'innerHTML'
+                    });
+    
+                    // 3. Открываем шторку корзины
+                    window.dispatchEvent(new CustomEvent('open-cart'));
+                    
+                    // 4. Обновляем цифру на корзине (если сервер вернул новую цифру)
+                    // (HTMX сделает это сам через OOB Swap, если cart_modal настроен верно,
+                    // но для надежности можно и так)
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+{% endblock %}

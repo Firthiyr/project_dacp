@@ -1,0 +1,16 @@
+{% load cart_tags %}
+
+<a href="#" 
+   @click.prevent="cartOpen = true{% if mobile_menu %}; mobileMenuOpen = false{% endif %}" 
+   hx-get="{% url 'cart:cart_modal' %}" 
+   hx-target="#cart-content" 
+   hx-trigger="click"
+   class="relative text-white hover:text-primary transition-colors group {% if extra_classes %}{{ extra_classes }}{% endif %}">
+    
+    <i class="fa fa-shopping-cart text-xl"></i>
+    
+    <span id="cart-badge{% if id_suffix %}-{{ id_suffix }}{% endif %}" 
+          class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+        {% get_cart_count %}
+    </span>
+</a>
