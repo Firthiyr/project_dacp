@@ -108,7 +108,7 @@ class CustomUserLoginForm(AuthenticationForm):
             if self.user_cache is None:
                 raise forms.ValidationError("Invalid email or password")
             # Якщо аккаунтбуло деактивовано, перевірка і вивід повідомлення
-            elif not self.user_cache.is_active():
+            elif not self.user_cache.is_active:
                 raise forms.ValidationError("This account was inactive")
             return self.changed_data
 

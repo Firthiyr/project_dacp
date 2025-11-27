@@ -1,0 +1,160 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Create Account - Poseify{% endblock %}
+
+{% block content %}
+<style>
+    /* Стили для полей ввода (как в login.html) */
+    .dotted-input {
+        border: none;
+        border-bottom: 2px dotted #d1d5db;
+        background: transparent;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+    .dotted-input:focus {
+        border-bottom-color: #374151; /* Dark gray */
+    }
+    .dotted-input::placeholder {
+        color: #9ca3af; /* Gray-400 */
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+    }
+    /* Подсветка родительского контейнера при фокусе */
+    .input-group.focused .dotted-input {
+        border-bottom-color: #111; 
+    }
+</style>
+
+<div class="min-h-[80vh] flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-heading font-bold text-dark tracking-wide uppercase">
+                Create Account
+            </h2>
+        </div>
+
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="text-red-500 text-sm text-center bg-red-50 p-2 rounded">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form id="createAccountForm" 
+              method="post" 
+              action="{% url 'users:register' %}"
+              class="mt-8 space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="input-group">
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="input-group">
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="input-group">
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="input-group">
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.password1.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="input-group">
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.password2.errors.0 }}</div>
+                {% endif %}
+                <div id="passwordError" class="text-red-500 text-xs mt-1 hidden">
+                    Passwords do not match
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 pt-4">
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold text-white bg-dark hover:bg-primary transition-colors duration-300 uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dark">
+                    Create
+                </button>
+                
+                <a href="{% url 'users:login' %}"
+                   class="w-full flex justify-center py-3 px-4 border-2 border-gray-300 text-sm font-bold text-gray-700 bg-transparent hover:border-dark hover:text-dark transition-colors duration-300 uppercase tracking-wider text-center">
+                    Log In
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 1. Валидация совпадения паролей на лету
+    const form = document.getElementById('createAccountForm');
+    const passwordInput = document.getElementById('id_password1'); // Django дает id: id_названиеполя
+    const confirmPasswordInput = document.getElementById('id_password2');
+    const passwordError = document.getElementById('passwordError');
+
+    function validatePasswords() {
+        if (!passwordInput || !confirmPasswordInput) return true;
+        
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (confirmPassword && password !== confirmPassword) {
+            passwordError.classList.remove('hidden');
+            confirmPasswordInput.style.borderBottomColor = 'red';
+            return false;
+        } else {
+            passwordError.classList.add('hidden');
+            confirmPasswordInput.style.borderBottomColor = ''; // Сброс
+            return true;
+        }
+    }
+
+    if (confirmPasswordInput && passwordInput) {
+        confirmPasswordInput.addEventListener('input', validatePasswords);
+        passwordInput.addEventListener('input', () => {
+            if (confirmPasswordInput.value) {
+                validatePasswords();
+            }
+        });
+    }
+
+    form.addEventListener('submit', function(e) {
+        if (!validatePasswords()) {
+            e.preventDefault(); // Остановить отправку, если пароли не совпадают
+        }
+    });
+
+    // 2. Эффект фокуса для полей
+    document.querySelectorAll('.dotted-input').forEach(input => {
+        input.addEventListener('focus', function() {
+            if(this.parentElement.classList.contains('input-group')) {
+                this.parentElement.classList.add('focused');
+            }
+        });
+        input.addEventListener('blur', function() {
+            if(this.parentElement.classList.contains('input-group')) {
+                this.parentElement.classList.remove('focused');
+            }
+        });
+    });
+</script>
+{% endblock %}

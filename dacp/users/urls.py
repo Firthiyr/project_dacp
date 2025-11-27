@@ -16,5 +16,5 @@ urlpatterns = [
         views.update_account_details,
         name="update_account_details",
     ),
-    path("logout/", views.logout, name="logout"),
+    path("logout/", views.logout_view, name="logout"),
 ]
