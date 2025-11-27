@@ -1,0 +1,90 @@
+<div class="animate__animated animate__fadeIn">
+    <h2 class="text-xl font-heading font-bold text-dark mb-6 tracking-wide uppercase border-b border-gray-100 pb-2">
+        Edit Details
+    </h2>
+
+    <form method="post" 
+          hx-post="{% url 'users:update_account_details' %}" 
+          hx-target="#account-details-content"
+          class="space-y-5">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <div class="text-red-500 text-xs mt-1">{{ form.phone.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="space-y-4 pt-2">
+            <p class="text-xs font-bold uppercase text-gray-400 tracking-wider">Shipping Address</p>
+            
+            {{ form.company }}
+            
+            {{ form.address1 }}
+            {% if form.address1.errors %}<div class="text-red-500 text-xs">{{ form.address1.errors.0 }}</div>{% endif %}
+            
+            {{ form.address2 }}
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    {{ form.city }}
+                    {% if form.city.errors %}<div class="text-red-500 text-xs">{{ form.city.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    {{ form.postal_code }}
+                    {% if form.postal_code.errors %}<div class="text-red-500 text-xs">{{ form.postal_code.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    {{ form.country }}
+                    {% if form.country.errors %}<div class="text-red-500 text-xs">{{ form.country.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    {{ form.province }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+            <button 
+                type="submit"
+                class="bg-dark text-white text-xs font-bold uppercase px-6 py-3 hover:bg-primary transition-colors tracking-wider"
+            >
+                Save Changes
+            </button>
+            <button 
+                type="button"
+                hx-get="{% url 'users:account_details' %}" 
+                hx-target="#account-details-content" 
+                class="border border-gray-300 text-gray-600 text-xs font-bold uppercase px-6 py-3 hover:border-dark hover:text-dark transition-colors tracking-wider"
+            >
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # Cтворені мною додатки
     "main",
     "cart",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -145,3 +146,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Налаштування сесій
 SESSION_COOKIE_AGE = 86400  # Термін дії сесії - 30 днів
 SESSION_SAVE_EVERY_REQUEST = True  # Оновлення терміну дії сесії при кожному запиті але доп. навантаження на сервер
+
+# Вказуємо джанго використовувати цю модель.
+AUTH_USER_MODEL = "users.CustomUser"

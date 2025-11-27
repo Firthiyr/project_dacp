@@ -1,0 +1,63 @@
+<div class="bg-white p-6 rounded-sm shadow-sm animate__animated animate__fadeIn">
+    <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+        <h2 class="text-xl font-heading font-bold text-dark tracking-wide uppercase">
+            Order #{{ order.id }}
+        </h2>
+        
+        <button 
+            hx-get="#" 
+            hx-target="#profile-main-content"
+            class="text-xs text-gray-500 hover:text-dark flex items-center gap-1 transition-colors"
+            onclick="location.reload()" 
+        >
+            <i class="fa fa-arrow-left"></i> Back to History
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="space-y-2 text-sm">
+            <p><span class="font-bold text-gray-500 uppercase text-xs">Placed on:</span> <br> {{ order.created_at|date:"F d, Y" }}</p>
+            <p><span class="font-bold text-gray-500 uppercase text-xs">Status:</span> <br> {{ order.get_status_display }}</p>
+            <p><span class="font-bold text-gray-500 uppercase text-xs">Payment:</span> <br> {{ order.get_payment_method_display|default:"Card" }}</p>
+        </div>
+        
+        <div class="space-y-2 text-sm">
+            <span class="font-bold text-gray-500 uppercase text-xs">Shipping Address:</span>
+            <p class="text-gray-700">
+                {{ order.first_name }} {{ order.last_name }}<br>
+                {{ order.address1|default:"" }}<br>
+                {{ order.city }}, {{ order.postal_code|default:"" }}<br>
+                {{ order.country }}
+            </p>
+        </div>
+    </div>
+    
+    <h3 class="text-sm font-bold text-dark uppercase mb-4 tracking-wider">Items</h3>
+    <div class="space-y-4 mb-6">
+        {% for item in order.items.all %}
+            <div class="flex items-center justify-between border-b border-gray-50 pb-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-gray-100 overflow-hidden">
+                         {% if item.product.main_image %}
+                            <img src="{{ item.product.main_image.url }}" class="w-full h-full object-cover">
+                         {% endif %}
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm font-bold text-dark">{{ item.product.name }}</p>
+                        <p class="text-xs text-gray-500">Size: {{ item.product_size.size.name }} | Qty: {{ item.quantity }}</p>
+                    </div>
+                </div>
+                <p class="text-sm font-bold text-dark">${{ item.get_cost }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="flex justify-end border-t border-gray-100 pt-4">
+        <div class="text-right space-y-1">
+            <p class="text-sm text-gray-500">Subtotal: ${{ order.get_total_cost }}</p>
+            <p class="text-sm text-gray-500">Shipping: Free</p>
+            <p class="text-xl font-heading font-bold text-primary mt-2">Total: ${{ order.get_total_cost }}</p>
+        </div>
+    </div>
+</div>

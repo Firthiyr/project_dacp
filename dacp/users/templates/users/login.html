@@ -1,0 +1,112 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Log In - Poseify{% endblock %}
+
+{% block content %}
+<style>
+    /* Стили для полей ввода, как в референсе */
+    .dotted-input {
+        border: none;
+        border-bottom: 2px dotted #d1d5db;
+        background: transparent;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+    .dotted-input:focus {
+        border-bottom-color: #374151; /* Dark gray */
+    }
+    .dotted-input::placeholder {
+        color: #9ca3af; /* Gray-400 */
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+    }
+    /* Добавляем класс focused для родителя, если нужно стилизовать контейнер */
+    .input-group.focused .dotted-input {
+        border-bottom-color: #111; /* Dark */
+    }
+</style>
+
+<div class="min-h-[80vh] flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-heading font-bold text-dark tracking-wide uppercase">
+                Log In
+            </h2>
+        </div>
+        
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form class="mt-8 space-y-6" 
+              id="loginForm"
+              method="post" 
+              action="{% url 'users:login' %}">
+            {% csrf_token %}
+            
+            <div class="space-y-6">
+                <div class="input-group">
+                    {{ form.username }} 
+                    {% if form.username.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="text-red-500 text-sm text-center">
+                    {{ form.non_field_errors.0 }}
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-2 gap-4 pt-4">
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold text-white bg-dark hover:bg-primary transition-colors duration-300 uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dark">
+                    Log In
+                </button>
+                
+                <a href="{% url 'users:register' %}"
+                   hx-get="{% url 'users:register' %}"
+                   hx-target="#main-content"
+                   hx-push-url="true"
+                   class="w-full flex justify-center py-3 px-4 border-2 border-gray-300 text-sm font-bold text-gray-700 bg-transparent hover:border-dark hover:text-dark transition-colors duration-300 uppercase tracking-wider text-center">
+                    Create Account
+                </a>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="#" class="text-xs text-gray-500 hover:text-dark transition-colors">
+                    Forgot your password?
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Скрипт для подсветки полей (из твоего примера)
+    document.querySelectorAll('.dotted-input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    });
+</script>
+{% endblock %}

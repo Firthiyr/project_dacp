@@ -1,0 +1,46 @@
+<div class="animate__animated animate__fadeIn">
+    <h2 class="text-xl font-heading font-bold text-dark mb-4 tracking-wide uppercase border-b border-gray-100 pb-2">
+        Account Details
+    </h2>
+    
+    <div class="space-y-3 mb-6">
+        <div>
+            <span class="text-xs text-gray-400 uppercase tracking-wider font-bold">Name</span>
+            <p class="text-sm text-dark font-medium">{{ user.first_name }} {{ user.last_name }}</p>
+        </div>
+        
+        <div>
+            <span class="text-xs text-gray-400 uppercase tracking-wider font-bold">Email</span>
+            <p class="text-sm text-dark font-medium">{{ user.email }}</p>
+        </div>
+
+        <div>
+            <span class="text-xs text-gray-400 uppercase tracking-wider font-bold">Phone</span>
+            <p class="text-sm text-dark font-medium">{{ user.phone|default:"-" }}</p>
+        </div>
+
+        <div>
+            <span class="text-xs text-gray-400 uppercase tracking-wider font-bold">Address</span>
+            <p class="text-sm text-gray-600">
+                {% if user.address1 %}
+                    {{ user.address1 }} {{ user.address2|default:"" }}<br>
+                    {{ user.city }}, {{ user.province|default:"" }} {{ user.postal_code|default:"" }}<br>
+                    {{ user.country }}
+                {% else %}
+                    <span class="italic text-gray-400">Address not set</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="flex gap-4">
+        <button 
+            hx-get="{% url 'users:edit_account_details' %}" 
+            hx-target="#account-details-content" 
+            hx-swap="innerHTML"
+            class="bg-dark text-white text-xs font-bold uppercase px-6 py-3 hover:bg-primary transition-colors tracking-wider"
+        >
+            Edit Details
+        </button>
+    </div>
+</div>
