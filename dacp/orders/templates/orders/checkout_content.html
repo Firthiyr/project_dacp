@@ -1,0 +1,220 @@
+{% load static %}
+
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <nav class="flex items-center text-sm text-gray-500 mb-8 uppercase tracking-wider">
+        <a href="{% url 'main:index' %}" class="hover:text-primary transition-colors">Home</a>
+        <span class="mx-2">/</span>
+        <a href="{% url 'cart:cart_modal' %}" class="hover:text-primary transition-colors">Cart</a>
+        <span class="mx-2">/</span>
+        <span class="text-dark font-bold">Checkout</span>
+    </nav>
+
+    <div class="grid lg:grid-cols-12 gap-12">
+        
+        <div class="lg:col-span-7">
+            {% if error_message %}
+            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fa fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">{{ error_message }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" 
+                  id="order-form" 
+                  hx-post="{% url 'orders:checkout' %}" 
+                  hx-target="#checkout-container" 
+                  hx-swap="innerHTML"
+                  class="space-y-8">
+                {% csrf_token %}
+                
+                <div class="bg-white p-6 shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-heading font-bold text-dark mb-6 uppercase tracking-wide">Contact Info</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-heading font-bold text-dark mb-6 uppercase tracking-wide">Shipping Address</h2>
+                    
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Country / Region</label>
+                            {{ form.country }}
+                            {% if form.country.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.country.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">First name</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Last name</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Company (Optional)</label>
+                            {{ form.company }}
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Address</label>
+                            {{ form.address1 }}
+                            {% if form.address1.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.address1.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Apartment, suite, etc.</label>
+                            {{ form.address2 }}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">City</label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.city.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Province / State</label>
+                            {{ form.province }}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Postal code</label>
+                            {{ form.postal_code }}
+                            {% if form.postal_code.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.postal_code.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Phone</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.phone.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-heading font-bold text-dark mb-6 uppercase tracking-wide">Payment Method</h2>
+                    
+                    <input type="hidden" name="payment_provider" id="payment_provider">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button type="submit"
+                                onclick="document.getElementById('payment_provider').value='stripe'"
+                                class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold text-white bg-[#635BFF] hover:bg-[#4B45C6] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                                <i class="fab fa-stripe text-3xl"></i>
+                            </span>
+                            <span class="uppercase tracking-wider mt-1">Pay with Stripe</span>
+                        </button>
+                        
+                        <button type="submit"
+                                onclick="document.getElementById('payment_provider').value='heleket'"
+                                class="group relative w-full flex justify-center py-4 px-4 border border-dark text-sm font-bold text-dark bg-white hover:bg-dark hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dark shadow-sm">
+                            <span class="uppercase tracking-wider mt-1">Pay with Heleket</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="lg:col-span-5">
+            <div class="bg-white p-6 shadow-lg border border-gray-100 sticky top-24">
+                <h2 class="text-xl font-heading font-bold text-dark mb-6 uppercase tracking-wide border-b border-gray-100 pb-4">
+                    Order Summary
+                </h2>
+
+                <div class="space-y-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar mb-6">
+                    {% for item in cart_items %}
+                    <div class="flex items-start gap-4">
+                        <div class="relative w-16 h-16 bg-gray-100 border border-gray-200 flex-shrink-0">
+                            {% if item.product.main_image %}
+                                <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <div class="w-full h-full flex items-center justify-center text-xs text-gray-400">No img</div>
+                            {% endif %}
+                            <span class="absolute -top-2 -right-2 bg-dark text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                                {{ item.quantity }}
+                            </span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-bold text-dark uppercase truncate">{{ item.product.name }}</h3>
+                            <p class="text-xs text-gray-500">Size: {{ item.product_size.size.name }}</p>
+                        </div>
+                        <div class="text-sm font-bold text-dark">
+                            ${{ item.total_price }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="space-y-3 border-t border-gray-100 pt-4">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Subtotal</span>
+                        <span class="font-medium text-dark">${{ total_price }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Shipping</span>
+                        <span class="text-xs italic">Calculated next step</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center border-t-2 border-dark mt-6 pt-4">
+                    <span class="text-lg font-heading font-bold text-dark uppercase">Total</span>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-500 block">USD</span>
+                        <span class="text-2xl font-bold text-primary">${{ total_price }}</span>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-center gap-4 text-gray-400 text-2xl">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-stripe"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Простая валидация на клиенте перед отправкой
+    document.getElementById('order-form').addEventListener('submit', function(e) {
+        const provider = document.getElementById('payment_provider').value;
+        if (!provider) {
+            e.preventDefault();
+            alert('Please select a payment method.');
+        }
+    });
+</script>

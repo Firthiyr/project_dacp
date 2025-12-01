@@ -1,0 +1,10 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}Checkout - Poseify{% endblock %}
+
+{% block content %}
+    <div id="checkout-container" class="min-h-screen bg-gray-50">
+        {% include "orders/checkout_content.html" %}
+    </div>
+{% endblock content %}

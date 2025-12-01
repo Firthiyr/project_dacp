@@ -1,0 +1,38 @@
+<main class="min-h-[60vh] flex flex-col items-center justify-center mx-auto px-4 sm:px-6 lg:px-8 py-12 animate__animated animate__fadeIn">
+    <div class="text-center max-w-lg mx-auto">
+        <div class="mb-6 flex justify-center">
+            <div class="h-20 w-20 bg-red-50 rounded-full flex items-center justify-center">
+                <i class="fa fa-times text-3xl text-red-500"></i>
+            </div>
+        </div>
+
+        <h1 class="text-3xl font-heading font-bold text-dark mb-4 uppercase tracking-wide">
+            Payment Cancelled
+        </h1>
+        
+        <p class="text-gray-600 mb-2">
+            Your order <span class="font-bold text-dark">#{{ order.id }}</span> was not processed.
+        </p>
+        <p class="text-gray-500 mb-8 text-sm">
+            Don't worry, you haven't been charged. You can try again or choose a different payment method.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'orders:checkout' %}" 
+               hx-get="{% url 'orders:checkout' %}" 
+               hx-target="#main-content" 
+               hx-push-url="true"
+               class="inline-block bg-dark text-white px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-primary transition-colors duration-300 shadow-md">
+                Try Again
+            </a>
+
+            <a href="{% url 'cart:cart_modal' %}" 
+               hx-get="{% url 'cart:cart_modal' %}"
+               hx-target="#cart-content" 
+               @click="$dispatch('open-cart')"
+               class="inline-block border border-gray-300 text-dark px-8 py-4 text-sm font-bold uppercase tracking-widest hover:border-dark transition-colors duration-300">
+                Return to Cart
+            </a>
+        </div>
+    </div>
+</main>

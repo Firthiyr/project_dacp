@@ -5,7 +5,12 @@
 <p class="mt-0.5 text-sm text-gray-500 mb-6">Shipping and taxes calculated at checkout.</p>
 
 <div class="space-y-3">
-    <a href="#" class="flex items-center justify-center rounded-sm border border-transparent bg-primary px-6 py-3 text-base font-bold text-white shadow-sm hover:bg-dark transition-colors uppercase tracking-wider">
+    <a href="{% url 'orders:checkout' %}" 
+       hx-get="{% url 'orders:checkout' %}" 
+       hx-target="#main-content" 
+       hx-push-url="true"
+       @click="cartOpen = false"
+       class="flex items-center justify-center rounded-sm border border-transparent bg-primary px-6 py-3 text-base font-bold text-white shadow-sm hover:bg-dark transition-colors uppercase tracking-wider cursor-pointer">
         Checkout
     </a>
     

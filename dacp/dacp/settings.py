@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "main",
     "cart",
     "users",
+    "orders",
+    "payment",
 ]
 
 MIDDLEWARE = [
@@ -149,3 +151,7 @@ SESSION_SAVE_EVERY_REQUEST = True  # Оновлення терміну дії с
 
 # Вказуємо джанго використовувати цю модель.
 AUTH_USER_MODEL = "users.CustomUser"
+
+# Stripe платіжна система для крипти
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
