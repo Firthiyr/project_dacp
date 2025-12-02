@@ -87,6 +87,22 @@ def stripe_webhook(request):
             order.status = "processing"
             order.stripe_payment_intent_id = session.get("payment_intent")
             order.save()
+
+            for item in order.items.all():
+                product_size = item.size  # Получаем объект ProductSize
+
+                # Проверяем, есть ли еще товар (на всякий случай)
+                if product_size.stock >= item.quantity:
+                    product_size.stock -= item.quantity
+                    product_size.save()
+                else:
+                    # Логируем проблему: кто-то купил товара больше, чем было
+                    print(
+                        f"WARNING: Order {order.id} bought {item.quantity} of {product_size}, but stock was {product_size.stock}"
+                    )
+                    # Все равно списываем (будет минус), или ставим 0 - зависит от бизнес-логики
+                    product_size.stock = max(0, product_size.stock - item.quantity)
+                    product_size.save()
         # Якщо замовлення не знайдено
         except Order.DoesNotExist:
             return HttpResponse(status=400)

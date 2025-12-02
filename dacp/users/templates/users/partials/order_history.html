@@ -24,13 +24,9 @@
                         <p class="text-sm font-medium text-gray-600">Total: <span class="text-dark font-bold">${{ order.total_price }}</span></p>
                         
                         <button 
-                            href="#"
-                            hx-get="#" 
-                            hx-target="#profile-main-content" 
-                            hx-push-url="true"
-                            class="text-xs font-bold uppercase text-primary hover:text-dark transition-colors underline"
-                            onclick="alert('Orders app is under construction!')"
-                        >
+                            hx-get="{% url 'users:order_detail' order.id %}" 
+                            hx-target="#account-details-content" 
+                            class="text-xs font-bold uppercase text-primary hover:text-dark transition-colors underline">
                             View Details
                         </button>
                     </div>

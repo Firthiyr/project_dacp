@@ -32,11 +32,12 @@
                         </li>
                         
                         <li class="nav-item">
-                            <button 
-                               hx-get="{% url 'users:account_details' %}" 
-                               class="flex items-center text-gray-600 font-bold text-sm tracking-wide uppercase hover:text-primary transition-colors w-full text-left">
+                            <a href="#" 
+                            hx-get="{% url 'users:order_history' %}" 
+                            hx-target="#account-details-content" 
+                            class="flex items-center text-gray-600 font-bold text-sm tracking-wide uppercase hover:text-primary transition-colors w-full text-left">
                                 Order History
-                            </button>
+                            </a>
                         </li>
                         
                         <li class="nav-item pt-4 border-t border-gray-100">

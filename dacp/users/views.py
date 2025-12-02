@@ -8,6 +8,7 @@ from .forms import CustomUserCreationForm, CustomUserLoginForm, CustomUserUpdate
 from .models import CustomUser
 from django.contrib import messages
 from main.models import Product
+from orders.models import Order
 
 # login_required для того, щоб виділити профіль, функції що будуть доступні для зараєстрвоаних
 
@@ -120,3 +121,23 @@ def logout_view(request):
     if request.headers.get("HX-Request"):
         return HttpResponse(headers={"HX-Redirect": reverse("main:index")})
     return redirect("main:index")
+
+
+@login_required(login_url="/users/login/")
+def order_history(request):
+    # Получаем все заказы пользователя, от новых к старым
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+
+    return TemplateResponse(
+        request, "users/partials/order_history.html", {"orders": orders}
+    )
+
+
+@login_required(login_url="/users/login/")
+def order_detail(request, order_id):
+    # Получаем заказ, но только если он принадлежит текущему пользователю (безопасность!)
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    return TemplateResponse(
+        request, "users/partials/order_detail.html", {"order": order}
+    )

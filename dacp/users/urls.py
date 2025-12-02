@@ -17,4 +17,6 @@ urlpatterns = [
         name="update_account_details",
     ),
     path("logout/", views.logout_view, name="logout"),
+    path("orders/", views.order_history, name="order_history"),
+    path("orders/<int:order_id>/", views.order_detail, name="order_detail"),
 ]
