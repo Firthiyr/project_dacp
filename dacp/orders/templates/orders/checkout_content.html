@@ -26,11 +26,11 @@
             {% endif %}
 
             <form method="post" 
-                  id="order-form" 
-                  hx-post="{% url 'orders:checkout' %}" 
-                  hx-target="#checkout-container" 
-                  hx-swap="innerHTML"
-                  class="space-y-8">
+                id="order-form" 
+                hx-post="{% url 'orders:checkout' %}" 
+                hx-target="#main-content" 
+                hx-swap="innerHTML"
+                class="space-y-8">
                 {% csrf_token %}
                 
                 <div class="bg-white p-6 shadow-sm border border-gray-100">
@@ -138,11 +138,11 @@
                             <span class="uppercase tracking-wider mt-1">Pay with Stripe</span>
                         </button>
                         
-                        <button type="submit"
+                        <!--<button type="submit"
                                 onclick="document.getElementById('payment_provider').value='heleket'"
                                 class="group relative w-full flex justify-center py-4 px-4 border border-dark text-sm font-bold text-dark bg-white hover:bg-dark hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dark shadow-sm">
                             <span class="uppercase tracking-wider mt-1">Pay with Heleket</span>
-                        </button>
+                        </button>-->
                     </div>
                 </div>
             </form>

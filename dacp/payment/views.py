@@ -26,7 +26,7 @@ stripe_endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
 # Метод для створення платіжної сесії на замовлення
 def create_stripe_checkout_session(order, request):
-    cart = CartMixin().get.cart(request)
+    cart = CartMixin().get_cart(request)
     line_items = []
     for item in cart.items.select_related("product", "product_size"):
         # Продивляємо всі товари у нашій корзині
