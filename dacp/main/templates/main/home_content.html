@@ -1,169 +1,211 @@
 {% load static %}
 
-<div class="relative w-full h-screen min-h-[600px] bg-dark overflow-hidden group">
-    <div class="absolute inset-0 transition-opacity duration-700 opacity-100">
-        <img class="w-full h-full object-cover opacity-70" src="{% static 'img/carousel-1.jpg' %}" alt="New Collection">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40"></div>
-    </div>
+<div class="relative w-full h-screen min-h-[600px] bg-dark overflow-hidden group" 
+     x-data="{ activeSlide: 0, total: {{ banners|length }} }" 
+     x-init="if(total > 1) setInterval(() => { activeSlide = (activeSlide + 1) % total }, 6000)">
     
-    <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
-        <div class="animate__animated animate__slideInDown">
-            <h5 class="text-primary text-xl font-heading font-bold uppercase tracking-widest mb-4">New Season</h5>
-            <h1 class="text-white text-5xl md:text-7xl lg:text-8xl font-heading font-bold mb-6 leading-tight shadow-sm">
-                Summer Collection
-            </h1>
-        </div>
+    {% for banner in banners %}
+    <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+         x-show="activeSlide === {{ forloop.counter0 }}"
+         x-transition:enter="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;" 
+         :style="{ display: activeSlide === {{ forloop.counter0 }} ? 'block' : 'none' }">
+         
+        {% if banner.image %}
+        <img class="w-full h-full object-cover opacity-70" src="{{ banner.image.url }}" alt="{{ banner.title }}">
+        {% else %}
+        <div class="w-full h-full bg-gray-800"></div>
+        {% endif %}
         
-        <p class="text-gray-100 text-lg md:text-xl max-w-2xl mb-10 animate__animated animate__slideInDown animation-delay-200 drop-shadow-md">
-            Discover the latest trends in minimalist fashion. Elegance, comfort, and style combined in our new arrivals.
-        </p>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40"></div>
         
-        <div class="flex gap-4 animate__animated animate__slideInDown animation-delay-400">
-            <a href="{% url 'main:catalog_all' %}" 
-               class="bg-primary text-white px-8 py-3 text-lg font-bold uppercase hover:bg-white hover:text-dark transition-colors duration-300">
-                Shop Now
-            </a>
-            <a href="#new-arrivals" 
-               class="border-2 border-white text-white px-8 py-3 text-lg font-bold uppercase hover:bg-white hover:text-dark transition-colors duration-300">
-                View Lookbook
-            </a>
-        </div>
-    </div>
-</div>
-<div class="bg-white py-12 border-b border-gray-100 relative z-20 -mt-16 container mx-auto px-4 shadow-lg rounded-sm">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-100">
-        <div class="p-4">
-            <i class="fa fa-truck text-4xl text-primary mb-4"></i>
-            <h5 class="font-heading font-bold text-dark uppercase mb-2">Free Shipping</h5>
-            <p class="text-gray-500 text-sm">On all orders over $100</p>
-        </div>
-        <div class="p-4">
-            <i class="fa fa-undo text-4xl text-primary mb-4"></i>
-            <h5 class="font-heading font-bold text-dark uppercase mb-2">Easy Returns</h5>
-            <p class="text-gray-500 text-sm">30-day money back guarantee</p>
-        </div>
-        <div class="p-4">
-            <i class="fa fa-headset text-4xl text-primary mb-4"></i>
-            <h5 class="font-heading font-bold text-dark uppercase mb-2">24/7 Support</h5>
-            <p class="text-gray-500 text-sm">Dedicated support team</p>
-        </div>
-    </div>
-</div>
-
-
-<div class="py-24 bg-secondary">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-16 wow fadeInUp" data-wow-delay="0.1s">
-            <h5 class="text-primary font-bold uppercase tracking-widest mb-2">Collections</h5>
-            <h1 class="text-4xl md:text-5xl font-heading font-bold text-dark uppercase">Shop by Category</h1>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <a href="{% url 'main:catalog_all' %}" class="group relative h-96 overflow-hidden wow fadeInUp" data-wow-delay="0.1s">
-                <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{% static 'img/service-1.jpg' %}" alt="Women">
-                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <h3 class="text-3xl font-heading font-bold uppercase mb-2">Women</h3>
-                    <span class="text-sm uppercase tracking-wider border-b-2 border-transparent group-hover:border-primary transition-all">Explore</span>
-                </div>
-            </a>
-            
-            <a href="{% url 'main:catalog_all' %}" class="group relative h-96 overflow-hidden wow fadeInUp" data-wow-delay="0.3s">
-                <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{% static 'img/service-2.jpg' %}" alt="Men">
-                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <h3 class="text-3xl font-heading font-bold uppercase mb-2">Men</h3>
-                    <span class="text-sm uppercase tracking-wider border-b-2 border-transparent group-hover:border-primary transition-all">Explore</span>
-                </div>
-            </a>
-            
-            <a href="{% url 'main:catalog_all' %}" class="group relative h-96 overflow-hidden wow fadeInUp" data-wow-delay="0.5s">
-                <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{% static 'img/service-3.jpg' %}" alt="Accessories">
-                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <h3 class="text-3xl font-heading font-bold uppercase mb-2">Accessories</h3>
-                    <span class="text-sm uppercase tracking-wider border-b-2 border-transparent group-hover:border-primary transition-all">Explore</span>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
-
-
-<div id="new-arrivals" class="py-24 bg-white">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="text-center md:text-left">
-                <h5 class="text-primary font-bold uppercase tracking-widest mb-2">New Arrivals</h5>
-                <h1 class="text-4xl md:text-5xl font-heading font-bold text-dark uppercase">Trending Now</h1>
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
+            <div class="animate__animated animate__slideInDown">
+                {% if banner.subtitle %}
+                <h5 class="text-primary text-xl font-heading font-bold uppercase tracking-widest mb-4">
+                    {{ banner.subtitle }}
+                </h5>
+                {% endif %}
+                <h1 class="text-white text-5xl md:text-7xl lg:text-8xl font-heading font-bold mb-6 leading-tight shadow-sm">
+                    {{ banner.title }}
+                </h1>
             </div>
-            <a href="{% url 'main:catalog_all' %}" class="hidden md:inline-block text-dark border-b-2 border-primary pb-1 hover:text-primary transition-colors">
-                View All Products <i class="fa fa-arrow-right ml-2"></i>
-            </a>
+            
+            <div class="flex gap-4 animate__animated animate__slideInDown animation-delay-400">
+                <a href="{% url banner.button_link %}"
+                   hx-get="{% url banner.button_link %}"
+                   hx-target="#main-content"
+                   hx-push-url="true"
+                   hx-swap="innerHTML scroll:top" 
+                   class="bg-primary text-white px-8 py-3 text-lg font-bold uppercase hover:bg-white hover:text-dark transition-colors duration-300">
+                    {{ banner.button_text }}
+                </a>    
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="absolute inset-0 block">
+        <img class="w-full h-full object-cover opacity-70" src="{% static 'img/carousel-1.jpg' %}" alt="Default Banner">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40"></div>
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
+            <h1 class="text-white text-5xl md:text-7xl lg:text-8xl font-heading font-bold mb-6">
+                Poseify
+            </h1>
+            <p class="text-gray-100 text-lg mb-10">Welcome to our store</p>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% if banners|length > 1 %}
+    <div class="absolute bottom-10 left-0 right-0 flex justify-center gap-3 z-20">
+        {% for banner in banners %}
+        <button @click="activeSlide = {{ forloop.counter0 }}" 
+                class="w-3 h-3 rounded-full transition-colors"
+                :class="activeSlide === {{ forloop.counter0 }} ? 'bg-primary' : 'bg-white/50 hover:bg-white'">
+        </button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<section class="py-24 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-dark uppercase tracking-wide">Collections</h2>
+            <div class="w-16 h-1 bg-primary mx-auto mt-4"></div>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for category in categories %}
+            <a href="{% url 'main:catalog' category.slug %}"
+               hx-get="{% url 'main:catalog' category.slug %}"
+               hx-target="#main-content"
+               hx-push-url="true"
+               class="group relative h-[400px] overflow-hidden block bg-gray-100 transition-all duration-500 hover:bg-white hover:shadow-2xl hover:-translate-y-1">
+                
+                <div class="absolute -bottom-10 -right-4 text-[15rem] font-heading font-bold text-white leading-none select-none transition-transform duration-700 group-hover:scale-110 group-hover:text-gray-50 pointer-events-none">
+                    {{ category.name|slice:":1" }}
+                </div>
+                
+                <div class="absolute inset-0 flex flex-col justify-end p-10 z-10">
+                    
+                    <div class="absolute top-8 right-8 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 group-hover:text-primary transition-colors">
+                        {{ category.products.count }} Items
+                    </div>
+
+                    <h3 class="text-3xl font-heading font-bold text-dark uppercase tracking-wide mb-4 transition-transform duration-500 group-hover:-translate-y-2">
+                        {{ category.name }}
+                    </h3>
+                    
+                    <div class="w-12 h-0.5 bg-gray-300 mb-6 group-hover:w-24 group-hover:bg-primary transition-all duration-500 ease-out"></div>
+
+                    <div class="flex items-center text-xs font-bold uppercase tracking-[0.15em] text-gray-500 group-hover:text-dark transition-colors duration-300">
+                        <span>View Collection</span>
+                        <i class="fa fa-arrow-right ml-3 transform group-hover:translate-x-2 transition-transform duration-300 text-primary"></i>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+            <div class="mb-4 md:mb-0">
+                <h2 class="text-3xl md:text-4xl font-heading font-bold text-dark uppercase tracking-wide">New Arrivals</h2>
+                <div class="w-16 h-1 bg-primary mt-4"></div>
+            </div>
+            <a href="{% url 'main:catalog_all' %}" 
+               hx-get="{% url 'main:catalog_all' %}"
+               hx-target="#main-content"
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="text-dark font-bold uppercase hover:text-primary transition-colors text-sm flex items-center group">
+                View All <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {% for product in new_arrivals %}
-            <div class="group bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="relative overflow-hidden aspect-[3/4] bg-gray-100">
+            <div class="group bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                <div class="relative overflow-hidden aspect-[3/4] bg-gray-200">
                     {% if product.main_image %}
-                        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     {% else %}
-                        <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">No Image</div>
+                    <div class="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
                     {% endif %}
                     
-                    <div class="absolute top-3 left-3 bg-white text-dark text-xs font-bold px-2 py-1 uppercase tracking-wider">
-                        New
-                    </div>
-
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <a href="{% url 'main:product_detail' product.slug %}" class="w-10 h-10 bg-white text-dark rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75" title="View Details">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <a href="{% url 'main:product_detail' product.slug %}"
+                           hx-get="{% url 'main:product_detail' product.slug %}"
+                           hx-target="#main-content"
+                           hx-push-url="true"
+                           hx-swap="innerHTML"
+                           class="bg-white text-dark w-12 h-12 flex items-center justify-center rounded-full hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 shadow-lg">
                             <i class="fa fa-eye"></i>
                         </a>
-                        <button class="w-10 h-10 bg-dark text-white rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                        </button>
                     </div>
+                    
+                    <div class="absolute top-4 left-4 bg-white/90 text-dark text-[10px] font-bold px-2 py-1 uppercase tracking-wider backdrop-blur-sm">New</div>
                 </div>
-
+                
                 <div class="p-4 text-center">
-                    <span class="text-xs text-gray-500 uppercase tracking-wider">{{ product.category.name }}</span>
-                    <h5 class="font-heading font-bold text-dark text-lg my-1 group-hover:text-primary transition-colors">
-                        <a href="{% url 'main:product_detail' product.slug %}">{{ product.name }}</a>
-                    </h5>
+                    <h3 class="text-sm font-bold text-dark uppercase mb-1">
+                        <a href="{% url 'main:product_detail' product.slug %}"
+                           hx-get="{% url 'main:product_detail' product.slug %}"
+                           hx-target="#main-content"
+                           hx-push-url="true"
+                           hx-swap="innerHTML"
+                           class="hover:text-primary transition-colors">
+                            {{ product.name }}
+                        </a>
+                    </h3>
                     <p class="text-primary font-bold">${{ product.price }}</p>
                 </div>
             </div>
             {% empty %}
-                <div class="col-span-4 text-center py-10 text-gray-500">
-                    No new arrivals yet. Check back soon!
-                </div>
+            <div class="col-span-4 text-center text-gray-500 py-10">No new arrivals at the moment.</div>
             {% endfor %}
         </div>
-
+        
         <div class="mt-8 text-center md:hidden">
-            <a href="{% url 'main:catalog_all' %}" class="inline-block bg-dark text-white px-8 py-3 font-bold uppercase">View All Products</a>
+            <a href="{% url 'main:catalog_all' %}" 
+               hx-get="{% url 'main:catalog_all' %}"
+               hx-target="#main-content"
+               hx-push-url="true"
+               hx-swap="innerHTML"
+               class="inline-block border border-dark text-dark px-8 py-3 text-sm font-bold uppercase hover:bg-dark hover:text-white transition-colors">
+                View All Products
+            </a>
         </div>
     </div>
-</div>
+</section>
 
-
-<div class="bg-secondary py-24">
-    <div class="container mx-auto px-4">
-        <div class="max-w-3xl mx-auto text-center">
-            <div class="wow fadeInUp" data-wow-delay="0.1s">
-                <h5 class="text-primary font-bold uppercase tracking-widest mb-2">Stay Updated</h5>
-                <h1 class="text-4xl md:text-5xl font-heading font-bold text-dark uppercase mb-6">Subscribe to Newsletter</h1>
-            </div>
-            <p class="text-lg text-gray-600 mb-10 wow fadeInUp" data-wow-delay="0.2s">
-                Get 10% off your first order and stay tuned for our latest arrivals and exclusive offers.
-            </p>
-            <form class="relative max-w-lg mx-auto wow fadeInUp" data-wow-delay="0.3s">
-                <input class="w-full bg-white text-dark border border-gray-200 rounded-full py-4 px-8 pr-36 focus:outline-none focus:border-primary placeholder-gray-400 shadow-sm" type="email" placeholder="Your email address">
-                <button type="button" class="absolute top-1.5 right-1.5 bg-dark text-white font-bold py-2.5 px-6 rounded-full hover:bg-primary transition-colors">
-                    Subscribe
-                </button>
-            </form>
-        </div>
+<section class="py-24 bg-dark text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+    <div class="container mx-auto px-4 text-center relative z-10 max-w-3xl">
+        <h5 class="text-primary font-bold uppercase tracking-widest mb-4 animate__animated animate__fadeIn">The Philosophy</h5>
+        <h2 class="text-3xl md:text-5xl font-heading font-bold uppercase mb-6 leading-tight">
+            Redefining Style for the Modern Era
+        </h2>
+        <p class="text-gray-400 text-lg mb-10 leading-relaxed">
+            We believe that fashion is more than just clothing—it's a statement. 
+            Our collections are crafted with precision, passion, and a commitment to quality 
+            that stands the test of time.
+        </p>
+        
+        <a href="{% url 'main:about' %}" 
+           hx-get="{% url 'main:about' %}"
+           hx-target="#main-content"
+           hx-push-url="true"
+           hx-swap="innerHTML scroll:top" 
+           class="inline-block bg-primary text-white px-10 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-dark transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            Read Our Story
+        </a>
     </div>
-</div>
+</section>

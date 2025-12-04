@@ -1,10 +1,16 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+    /* Скрипт для прокрутки наверх при переходе HTMX */
+    /* Добавляем этот фикс сюда, чтобы он точно работал глобально */
+</style>
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}Poseify - Modeling Agency{% endblock %}</title>
+    <title>{% block title %}FLUX - Modern Fashion{% endblock %}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <link href="{% static 'img/favicon.ico' %}" rel="icon">
@@ -19,7 +25,7 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D4A762',
+                        primary: '#D4A762', /* Золотой акцент */
                         secondary: '#F2F2F2',
                         dark: '#111111',
                     },
@@ -73,30 +79,43 @@
 
     {% if not is_htmx %}
     <nav class="bg-dark text-white w-full z-40 relative shadow-md">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="container mx-auto px-4 py-5 flex justify-between items-center">
             
-            <a href="{% url 'main:index' %}" class="text-2xl font-heading font-bold text-primary uppercase flex items-center shrink-0 z-50">
-                <i class="fa-regular fa-face-smile me-2"></i> Poseify
+            <a href="{% url 'main:index' %}" 
+               hx-get="{% url 'main:index' %}" 
+               hx-target="#main-content" 
+               hx-push-url="true"
+               class="text-3xl font-heading font-bold text-white tracking-[0.2em] uppercase flex items-center shrink-0 z-50 hover:text-primary transition-colors">
+                FLUX
             </a>
 
-            <div class="hidden lg:flex items-center justify-center space-x-8 text-sm font-medium uppercase tracking-wider absolute left-1/2 transform -translate-x-1/2">
-                <a href="{% url 'main:index' %}" class="hover:text-primary transition-colors {% if request.resolver_match.url_name == 'index' %}text-primary{% endif %}">Home</a>
-                <a href="#" class="hover:text-primary transition-colors">About</a>
-                <a href="{% url 'main:catalog_all' %}" class="hover:text-primary transition-colors {% if 'catalog' in request.path %}text-primary{% endif %}">Catalog</a>
+            <div class="hidden lg:flex items-center justify-center space-x-10 text-sm font-medium uppercase tracking-wider absolute left-1/2 transform -translate-x-1/2">
+                <a href="{% url 'main:index' %}" 
+                   hx-get="{% url 'main:index' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   class="hover:text-primary transition-colors nav-link">Home</a>
                 
-                <div class="relative group">
-                    <button class="flex items-center hover:text-primary transition-colors focus:outline-none uppercase">
-                        Pages <i class="fa fa-chevron-down ml-1 text-xs"></i>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 hover:text-primary">Our Models</a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 hover:text-primary">Testimonial</a>
-                    </div>
-                </div>
-                <a href="#" class="hover:text-primary transition-colors">Contact</a>
+                <a href="{% url 'main:catalog_all' %}" 
+                   hx-get="{% url 'main:catalog_all' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   class="hover:text-primary transition-colors nav-link">Catalog</a>
+                
+                <a href="{% url 'main:about' %}" 
+                   hx-get="{% url 'main:about' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   class="hover:text-primary transition-colors nav-link {% if request.resolver_match.url_name == 'about' %}text-primary font-bold{% endif %}">About</a>
+                
+                <a href="{% url 'main:contact' %}" 
+                   hx-get="{% url 'main:contact' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   class="hover:text-primary transition-colors nav-link {% if request.resolver_match.url_name == 'contact' %}text-primary font-bold{% endif %}">Contact</a>
             </div>
 
-            <div class="hidden lg:flex items-center gap-5">
+            <div class="hidden lg:flex items-center gap-6">
                 <div id="search-wrapper" class="flex items-center h-9 transition-all duration-300">
                     {% include 'main/search_button.html' %}
                 </div>
@@ -104,11 +123,19 @@
                 {% include 'cart/includes/cart_button.html' %}
 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'users:profile' %}" class="text-sm font-medium uppercase hover:text-primary transition-colors">
+                    <a href="{% url 'users:profile' %}" 
+                       hx-get="{% url 'users:profile' %}" 
+                       hx-target="#main-content" 
+                       hx-push-url="true"
+                       class="text-sm font-medium uppercase hover:text-primary transition-colors">
                         Account
                     </a>
                 {% else %}
-                    <a href="{% url 'users:login' %}" class="text-sm font-medium uppercase hover:text-primary transition-colors">
+                    <a href="{% url 'users:login' %}" 
+                       hx-get="{% url 'users:login' %}" 
+                       hx-target="#main-content" 
+                       hx-push-url="true"
+                       class="text-sm font-medium uppercase hover:text-primary transition-colors">
                         Sign In
                     </a>
                 {% endif %}
@@ -124,38 +151,56 @@
 
         </div>
 
-        <div x-show="mobileMenuOpen" x-collapse class="lg:hidden bg-gray-800 border-t border-gray-700">
-            <div class="flex flex-col p-4 space-y-4">
-                <form action="{% url 'main:catalog_all' %}" method="get" class="flex items-center bg-gray-700 rounded p-2">
-                    <input type="text" name="q" placeholder="Search..." class="bg-transparent border-none outline-none text-white w-full placeholder-gray-400">
+        <div x-show="mobileMenuOpen" x-collapse class="lg:hidden bg-gray-900 border-t border-gray-800">
+            <div class="flex flex-col p-6 space-y-4 text-center">
+                <form action="{% url 'main:catalog_all' %}" method="get" class="flex items-center bg-gray-800 rounded p-2 mb-4">
+                    <input type="text" name="q" placeholder="Search..." class="bg-transparent border-none outline-none text-white w-full placeholder-gray-500">
                     <button type="submit" class="text-primary mx-2"><i class="fa fa-search"></i></button>
                 </form>
 
-                <a href="{% url 'main:index' %}" class="text-white hover:text-primary font-medium">Home</a>
-                <a href="{% url 'main:catalog_all' %}" class="text-white hover:text-primary font-medium">Catalog</a>
-                
-                <a href="#" 
-                   @click.prevent="cartOpen = true; mobileMenuOpen = false"
-                   hx-get="{% url 'cart:cart_modal' %}" 
-                   hx-target="#cart-content" 
-                   hx-trigger="click"
-                   class="flex items-center justify-between text-white hover:text-primary font-medium cursor-pointer">
-                    <span>Cart</span>
-                    <i class="fa fa-chevron-right text-xs"></i>
-                </a>
+                <a href="{% url 'main:index' %}" 
+                   hx-get="{% url 'main:index' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   @click="mobileMenuOpen = false"
+                   class="text-white hover:text-primary font-medium text-lg nav-link">Home</a>
 
-                <a href="#" class="text-white hover:text-primary font-medium">Contact</a>
+                <a href="{% url 'main:catalog_all' %}" 
+                   hx-get="{% url 'main:catalog_all' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   @click="mobileMenuOpen = false"
+                   class="text-white hover:text-primary font-medium text-lg nav-link">Catalog</a>
+                
+                <a href="{% url 'main:about' %}" 
+                   hx-get="{% url 'main:about' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   @click="mobileMenuOpen = false" 
+                   class="text-white hover:text-primary font-medium text-lg {% if request.resolver_match.url_name == 'about' %}text-primary{% endif %}">About</a>
+
+                <a href="{% url 'main:contact' %}" 
+                   hx-get="{% url 'main:contact' %}" 
+                   hx-target="#main-content" 
+                   hx-push-url="true"
+                   @click="mobileMenuOpen = false" 
+                   class="text-white hover:text-primary font-medium text-lg {% if request.resolver_match.url_name == 'contact' %}text-primary{% endif %}">Contact</a>
                 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'users:profile' %}" class="text-white hover:text-primary font-medium border-t border-gray-700 pt-4 mt-2">
-                        My Account
-                    </a>
+                    <a href="{% url 'users:profile' %}" 
+                       hx-get="{% url 'users:profile' %}" 
+                       hx-target="#main-content" 
+                       hx-push-url="true"
+                       @click="mobileMenuOpen = false"
+                       class="text-primary font-bold border-t border-gray-800 pt-4 mt-2">My Account</a>
                 {% else %}
-                    <a href="{% url 'users:login' %}" class="text-white hover:text-primary font-medium border-t border-gray-700 pt-4 mt-2">
-                        Sign In / Register
-                    </a>
+                    <a href="{% url 'users:login' %}" 
+                       hx-get="{% url 'users:login' %}" 
+                       hx-target="#main-content" 
+                       hx-push-url="true"
+                       @click="mobileMenuOpen = false"
+                       class="text-white hover:text-primary border-t border-gray-800 pt-4 mt-2">Sign In</a>
                 {% endif %}
-
             </div>
         </div>
     </nav>
@@ -163,194 +208,40 @@
 
     <main id="main-content" class="flex-grow">
         {% block content %}
-        <div class="relative w-full h-screen min-h-[600px] bg-dark overflow-hidden group">
-            <div class="absolute inset-0 transition-opacity duration-700 opacity-100">
-            <img class="w-full h-full object-cover opacity-70" src="{% static 'img/carousel-1.jpg' %}" alt="New Collection">
-            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40"></div>
-        </div>
-        <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-10 px-4">
-            <div class="animate__animated animate__slideInDown">
-            <h5 class="text-primary text-xl font-heading font-bold uppercase tracking-widest mb-4">New Season</h5>
-            <h1 class="text-white text-5xl md:text-7xl lg:text-8xl font-heading font-bold mb-6 leading-tight shadow-sm">
-                Summer Collection
-            </h1>
-        </div>
-        
-        <p class="text-gray-100 text-lg md:text-xl max-w-2xl mb-10 animate__animated animate__slideInDown animation-delay-200 drop-shadow-md">
-            Discover the latest trends in minimalist fashion. Elegance, comfort, and style combined in our new arrivals.
-        </p>
-        
-        <div class="flex gap-4 animate__animated animate__slideInDown animation-delay-400">
-            <a href="{% url 'main:catalog_all' %}" 
-               class="bg-primary text-white px-8 py-3 text-lg font-bold uppercase hover:bg-white hover:text-dark transition-colors duration-300">
-                Shop Now
-            </a>
-            <a href="#new-arrivals" 
-               class="border-2 border-white text-white px-8 py-3 text-lg font-bold uppercase hover:bg-white hover:text-dark transition-colors duration-300">
-                View Lookbook
-            </a>
-        </div>
-    </div>
-</div>
-<div class="bg-white py-12 border-b border-gray-100 relative z-20 -mt-16 container mx-auto px-4 shadow-lg rounded-sm">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-100">
-        <div class="p-4">
-            <i class="fa fa-truck text-4xl text-primary mb-4"></i>
-            <h5 class="font-heading font-bold text-dark uppercase mb-2">Free Shipping</h5>
-            <p class="text-gray-500 text-sm">On all orders over $100</p>
-        </div>
-        <div class="p-4">
-            <i class="fa fa-undo text-4xl text-primary mb-4"></i>
-            <h5 class="font-heading font-bold text-dark uppercase mb-2">Easy Returns</h5>
-            <p class="text-gray-500 text-sm">30-day money back guarantee</p>
-        </div>
-        <div class="p-4">
-            <i class="fa fa-headset text-4xl text-primary mb-4"></i>
-            <h5 class="font-heading font-bold text-dark uppercase mb-2">24/7 Support</h5>
-            <p class="text-gray-500 text-sm">Dedicated support team</p>
-        </div>
-    </div>
-</div>
-
-
-<div class="py-24 bg-secondary">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-16 wow fadeInUp" data-wow-delay="0.1s">
-            <h5 class="text-primary font-bold uppercase tracking-widest mb-2">Collections</h5>
-            <h1 class="text-4xl md:text-5xl font-heading font-bold text-dark uppercase">Shop by Category</h1>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <a href="{% url 'main:catalog_all' %}" class="group relative h-96 overflow-hidden wow fadeInUp" data-wow-delay="0.1s">
-                <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{% static 'img/service-1.jpg' %}" alt="Women">
-                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <h3 class="text-3xl font-heading font-bold uppercase mb-2">Women</h3>
-                    <span class="text-sm uppercase tracking-wider border-b-2 border-transparent group-hover:border-primary transition-all">Explore</span>
-                </div>
-            </a>
-            
-            <a href="{% url 'main:catalog_all' %}" class="group relative h-96 overflow-hidden wow fadeInUp" data-wow-delay="0.3s">
-                <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{% static 'img/service-2.jpg' %}" alt="Men">
-                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <h3 class="text-3xl font-heading font-bold uppercase mb-2">Men</h3>
-                    <span class="text-sm uppercase tracking-wider border-b-2 border-transparent group-hover:border-primary transition-all">Explore</span>
-                </div>
-            </a>
-            
-            <a href="{% url 'main:catalog_all' %}" class="group relative h-96 overflow-hidden wow fadeInUp" data-wow-delay="0.5s">
-                <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{% static 'img/service-3.jpg' %}" alt="Accessories">
-                <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors"></div>
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <h3 class="text-3xl font-heading font-bold uppercase mb-2">Accessories</h3>
-                    <span class="text-sm uppercase tracking-wider border-b-2 border-transparent group-hover:border-primary transition-all">Explore</span>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
-
-
-<div id="new-arrivals" class="py-24 bg-white">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="text-center md:text-left">
-                <h5 class="text-primary font-bold uppercase tracking-widest mb-2">New Arrivals</h5>
-                <h1 class="text-4xl md:text-5xl font-heading font-bold text-dark uppercase">Trending Now</h1>
-            </div>
-            <a href="{% url 'main:catalog_all' %}" class="hidden md:inline-block text-dark border-b-2 border-primary pb-1 hover:text-primary transition-colors">
-                View All Products <i class="fa fa-arrow-right ml-2"></i>
-            </a>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {% for product in new_arrivals %}
-            <div class="group bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="relative overflow-hidden aspect-[3/4] bg-gray-100">
-                    {% if product.main_image %}
-                        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="{{ product.main_image.url }}" alt="{{ product.name }}">
-                    {% else %}
-                        <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">No Image</div>
-                    {% endif %}
-                    
-                    <div class="absolute top-3 left-3 bg-white text-dark text-xs font-bold px-2 py-1 uppercase tracking-wider">
-                        New
-                    </div>
-
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <a href="{% url 'main:product_detail' product.slug %}" class="w-10 h-10 bg-white text-dark rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75" title="View Details">
-                            <i class="fa fa-eye"></i>
-                        </a>
-                        <button class="w-10 h-10 bg-dark text-white rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-100" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="p-4 text-center">
-                    <span class="text-xs text-gray-500 uppercase tracking-wider">{{ product.category.name }}</span>
-                    <h5 class="font-heading font-bold text-dark text-lg my-1 group-hover:text-primary transition-colors">
-                        <a href="{% url 'main:product_detail' product.slug %}">{{ product.name }}</a>
-                    </h5>
-                    <p class="text-primary font-bold">${{ product.price }}</p>
-                </div>
-            </div>
-            {% empty %}
-                <div class="col-span-4 text-center py-10 text-gray-500">
-                    No new arrivals yet. Check back soon!
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="mt-8 text-center md:hidden">
-            <a href="{% url 'main:catalog_all' %}" class="inline-block bg-dark text-white px-8 py-3 font-bold uppercase">View All Products</a>
-        </div>
-    </div>
-</div>
-
-
-<div class="bg-secondary py-24">
-    <div class="container mx-auto px-4">
-        <div class="max-w-3xl mx-auto text-center">
-            <div class="wow fadeInUp" data-wow-delay="0.1s">
-                <h5 class="text-primary font-bold uppercase tracking-widest mb-2">Stay Updated</h5>
-                <h1 class="text-4xl md:text-5xl font-heading font-bold text-dark uppercase mb-6">Subscribe to Newsletter</h1>
-            </div>
-            <p class="text-lg text-gray-600 mb-10 wow fadeInUp" data-wow-delay="0.2s">
-                Get 10% off your first order and stay tuned for our latest arrivals and exclusive offers.
-            </p>
-            <form class="relative max-w-lg mx-auto wow fadeInUp" data-wow-delay="0.3s">
-                <input class="w-full bg-white text-dark border border-gray-200 rounded-full py-4 px-8 pr-36 focus:outline-none focus:border-primary placeholder-gray-400 shadow-sm" type="email" placeholder="Your email address">
-                <button type="button" class="absolute top-1.5 right-1.5 bg-dark text-white font-bold py-2.5 px-6 rounded-full hover:bg-primary transition-colors">
-                    Subscribe
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
+            {% include 'main/home_content.html' %}
         {% endblock %}
     </main>
 
     {% if not is_htmx %}
-    <footer class="bg-dark text-gray-300 py-12 mt-auto border-t border-gray-800">
+    <footer class="bg-dark text-gray-300 py-16 mt-auto mt-24 border-t border-gray-800">
         <div class="container mx-auto px-4 text-center">
-            <a href="{% url 'main:index' %}" class="inline-block mb-6">
-                <h1 class="text-4xl font-heading font-bold text-white uppercase">
-                    <i class="fa-regular fa-face-smile me-2"></i>Poseify
+            <a href="{% url 'main:index' %}" class="inline-block mb-8 group">
+                <h1 class="text-4xl font-heading font-bold text-white uppercase tracking-[0.2em] group-hover:text-primary transition-colors">
+                    FLUX
                 </h1>
             </a>
-            <div class="flex justify-center space-x-4 mb-8">
-                <a class="w-10 h-10 flex items-center justify-center border border-gray-600 text-primary rounded hover:bg-primary hover:text-white transition-colors" href="#!"><i class="fab fa-x-twitter"></i></a>
-                <a class="w-10 h-10 flex items-center justify-center border border-gray-600 text-primary rounded hover:bg-primary hover:text-white transition-colors" href="#!"><i class="fab fa-facebook-f"></i></a>
-                <a class="w-10 h-10 flex items-center justify-center border border-gray-600 text-primary rounded hover:bg-primary hover:text-white transition-colors" href="#!"><i class="fab fa-linkedin-in"></i></a>
+            
+            <div class="flex justify-center space-x-6 mb-10">
+                <a class="w-12 h-12 flex items-center justify-center border border-gray-600 text-gray-400 rounded-full hover:bg-primary hover:border-primary hover:text-white transition-all duration-300 transform hover:-translate-y-1" href="#!">
+                    <i class="fab fa-instagram text-xl"></i>
+                </a>
+                <a class="w-12 h-12 flex items-center justify-center border border-gray-600 text-gray-400 rounded-full hover:bg-primary hover:border-primary hover:text-white transition-all duration-300 transform hover:-translate-y-1" href="#!">
+                    <i class="fab fa-tiktok text-xl"></i>
+                </a>
+                <a class="w-12 h-12 flex items-center justify-center border border-gray-600 text-gray-400 rounded-full hover:bg-primary hover:border-primary hover:text-white transition-all duration-300 transform hover:-translate-y-1" href="#!">
+                    <i class="fab fa-youtube text-xl"></i>
+                </a>
             </div>
-            <p class="text-sm mb-2">&copy; <a class="border-b border-gray-600 hover:text-primary" href="#">Your Site Name</a>, All Right Reserved.</p>
+            
+            <p class="text-xs text-gray-500 uppercase tracking-wider">
+                &copy; {{ now|date:"Y" }} FLUX Store. All Rights Reserved.
+            </p>
         </div>
     </footer>
     {% endif %}
 
-    <a href="#" class="fixed bottom-8 right-8 bg-dark/80 backdrop-blur border border-primary text-primary w-10 h-10 flex items-center justify-center rounded hover:bg-primary hover:text-white transition-colors z-50 shadow-lg">
+    <a href="#" class="fixed bottom-8 right-8 bg-dark/80 backdrop-blur border border-primary text-primary w-10 h-10 flex items-center justify-center rounded hover:bg-primary hover:text-white transition-colors z-50 shadow-lg"
+       @click.prevent="window.scrollTo({top: 0, behavior: 'smooth'})">
         <i class="fa fa-arrow-up"></i>
     </a>
 
@@ -368,7 +259,6 @@
         <div class="fixed inset-0 overflow-hidden">
             <div class="absolute inset-0 overflow-hidden">
                 <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                    
                     <div class="pointer-events-auto w-screen max-w-md"
                          x-show="cartOpen"
                          @click.away="cartOpen = false"
@@ -378,7 +268,6 @@
                          x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700"
                          x-transition:leave-start="translate-x-0"
                          x-transition:leave-end="translate-x-full">
-                        
                         <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                             <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                                 <div class="flex items-start justify-between">
@@ -391,7 +280,6 @@
                                         </button>
                                     </div>
                                 </div>
-
                                 <div class="mt-8">
                                     <div class="flow-root" id="cart-content">
                                         <div class="flex justify-center py-10">
@@ -408,6 +296,41 @@
     </div>
     
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+    // Logic for updating active menu link
+    function updateActiveNavLink() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            const linkPath = link.getAttribute('href');
+            // Logic: Exact match OR start of path (except root /)
+            const isMatch = (linkPath === currentPath) || 
+                            (linkPath !== '/' && currentPath.startsWith(linkPath));
+
+            if (isMatch) {
+                link.classList.add('text-primary', 'font-bold');
+                link.classList.remove('text-white');
+            } else {
+                link.classList.remove('text-primary', 'font-bold');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', updateActiveNavLink);
+    document.addEventListener('htmx:pushedIntoHistory', updateActiveNavLink);
+
+    // Scroll to top logic for HTMX
+    document.addEventListener("htmx:afterSwap", function(event) {
+        if (event.detail.target.id === "main-content") {
+            document.documentElement.style.scrollBehavior = "auto";
+            window.scrollTo(0, 0);
+            setTimeout(() => {
+                document.documentElement.style.scrollBehavior = "smooth";
+            }, 10);
+        }
+    });
+    </script>
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
     {% endif %}

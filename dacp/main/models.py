@@ -67,3 +67,30 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.product.name}"
+
+
+class Banner(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Title")
+    subtitle = models.CharField(
+        max_length=200, blank=True, null=True, verbose_name="Subtitle"
+    )
+    image = models.ImageField(upload_to="sliders/", verbose_name="Image (1920x1080)")
+    is_active = models.BooleanField(default=True, verbose_name="Active")
+    order = models.IntegerField(default=0, verbose_name="Display order")
+
+    button_text = models.CharField(
+        max_length=50, default="Shop Now", verbose_name="Text for button"
+    )
+    button_link = models.CharField(
+        max_length=200,
+        default="main:catalog_all",
+        verbose_name="Link (e.g., main:catalog_all)",
+    )
+
+    class Meta:
+        verbose_name = "Banner on the main page"
+        verbose_name_plural = "Banners on the main page"
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.title

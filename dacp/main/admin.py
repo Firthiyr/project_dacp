@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Size, Product, ProductImage, ProductSize
+from .models import Category, Size, Product, ProductImage, ProductSize, Banner
 
 # Register your models here.
 
@@ -46,3 +46,10 @@ class SizeAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Size, SizeAdmin)
 admin.site.register(Product, ProductAdmin)
+
+
+@admin.register(Banner)
+class BannerAdmin(admin.ModelAdmin):
+    list_display = ("title", "is_active", "order")
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active",)

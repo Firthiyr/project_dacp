@@ -10,11 +10,17 @@ from django.contrib import messages
 from main.models import Product
 from orders.models import Order
 
-# login_required для того, щоб виділити профіль, функції що будуть доступні для зараєстрвоаних
+
+# Допоміжна функція, щоб не дублювати код
+def get_base_template(request):
+    if request.headers.get("HX-Request"):
+        return "main/base_htmx.html"
+    return "main/base.html"
 
 
-# Create your views here.
 def register(request):
+    base_template = get_base_template(request)
+
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -23,10 +29,15 @@ def register(request):
             return redirect("main:index")
     else:
         form = CustomUserCreationForm()
-    return render(request, "users/register.html", {"form": form})
+
+    return render(
+        request, "users/register.html", {"form": form, "base_template": base_template}
+    )
 
 
 def login_view(request):
+    base_template = get_base_template(request)
+
     if request.method == "POST":
         form = CustomUserLoginForm(request=request, data=request.POST)
         if form.is_valid():
@@ -35,24 +46,29 @@ def login_view(request):
             return redirect("main:index")
     else:
         form = CustomUserLoginForm()
-    return render(request, "users/login.html", {"form": form})
+
+    return render(
+        request, "users/login.html", {"form": form, "base_template": base_template}
+    )
 
 
-# Якщо клієнт не авторозивонаий і зайде на спец юрл, його перенаправить
 @login_required(login_url="/users/login")
-# Можливість зміни введених даних у профілі
 def profile_view(request):
+    base_template = get_base_template(request)
+
     if request.method == "POST":
         form = CustomUserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            if request.header.get("HX-Request"):
-                return HttpResponse(headers={"HX-Redirect": reverse("user:profile")})
+            # Для HTMX оновлюємо тільки контент або робимо редирект
+            if request.headers.get("HX-Request"):
+                return HttpResponse(headers={"HX-Redirect": reverse("users:profile")})
             return redirect("users:profile")
     else:
         form = CustomUserUpdateForm(instance=request.user)
 
-    recommended_product = Product.objects.all().order_by("id")[3:]
+    recommended_product = Product.objects.all().order_by("id")[:4]
+
     return TemplateResponse(
         request,
         "users/profile.html",
@@ -60,17 +76,16 @@ def profile_view(request):
             "form": form,
             "user": request.user,
             "recommended_products": recommended_product,
+            "base_template": base_template,
         },
     )
 
 
 @login_required(login_url="/users/login")
-# Для динамісної зміни інормації у профілі
-# account_details - попередній огляд (не розгорнутий)
 def account_details(request):
-    user = CustomUser.objects.get(id=request.user.id)
+    # Використовуємо request.user безпосередньо, зайвий запит до БД не обов'язковий
     return TemplateResponse(
-        request, "users/partials/account_details.html", {"user": user}
+        request, "users/partials/account_details.html", {"user": request.user}
     )
 
 
@@ -80,11 +95,10 @@ def edit_account_details(request):
     return TemplateResponse(
         request,
         "users/partials/edit_account_details.html",
-        {"users": request.user, "form": form},
+        {"user": request.user, "form": form},
     )
 
 
-# Для оновлення розгорнутої інформації в профілі.
 @login_required(login_url="/users/login")
 def update_account_details(request):
     if request.method == "POST":
@@ -93,29 +107,26 @@ def update_account_details(request):
             user = form.save(commit=False)
             user.clean()
             user.save()
-            updated_user = CustomUser.objects.get(id=user.id)
-            request.user = updated_user
+
+            # Оновлюємо об'єкт user в request, щоб відобразити актуальні дані відразу (Django може зробити це сам, але для надійності)
+
             if request.headers.get("HX-Request"):
                 return TemplateResponse(
                     request,
                     "users/partials/account_details.html",
-                    {"user": updated_user},
+                    {"user": user},
                 )
-            return TemplateResponse(
-                request, "users/partials/account_details.html", {"user": updated_user}
-            )
+            return redirect("users:profile")
         else:
             return TemplateResponse(
                 request,
                 "users/partials/edit_account_details.html",
                 {"user": request.user, "form": form},
             )
-    if request.headers.get("HX-Request"):
-        return HttpResponse(headers={"HX-Redirect": reverse("user:profile")})
+
     return redirect("users:profile")
 
 
-# Визід, також через request щоб було динамічно
 def logout_view(request):
     logout(request)
     if request.headers.get("HX-Request"):
@@ -125,9 +136,7 @@ def logout_view(request):
 
 @login_required(login_url="/users/login/")
 def order_history(request):
-    # Получаем все заказы пользователя, от новых к старым
     orders = Order.objects.filter(user=request.user).order_by("-created_at")
-
     return TemplateResponse(
         request, "users/partials/order_history.html", {"orders": orders}
     )
@@ -135,9 +144,7 @@ def order_history(request):
 
 @login_required(login_url="/users/login/")
 def order_detail(request, order_id):
-    # Получаем заказ, но только если он принадлежит текущему пользователю (безопасность!)
     order = get_object_or_404(Order, id=order_id, user=request.user)
-
     return TemplateResponse(
         request, "users/partials/order_detail.html", {"order": order}
     )

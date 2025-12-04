@@ -1,0 +1,166 @@
+{% extends base_template|default:"main/base.html" %}
+
+{% load static %}
+
+{% block title %}About Us - Poseify{% endblock %}
+
+{% block content %}
+<style>
+    .reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 1s ease-out;
+    }
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+
+<div class="relative w-full h-[60vh] min-h-[400px] bg-dark overflow-hidden flex items-center justify-center">
+    <div class="absolute inset-0">
+        <img src="{% static "img/about-hero.jpg" %}" alt="About Hero">
+        <div class="absolute inset-0 bg-black/40"></div>
+    </div>
+    
+    <div class="relative z-10 text-center px-4 animate__animated animate__fadeInUp">
+        <h5 class="text-primary text-lg font-heading font-bold uppercase tracking-[0.2em] mb-4">Our Story</h5>
+        <h1 class="text-white text-5xl md:text-7xl font-heading font-bold mb-6">Defining Modern Elegance</h1>
+        <div class="w-24 h-1 bg-primary mx-auto"></div>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-24 overflow-hidden">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
+        <div class="reveal order-2 lg:order-1">
+            <h5 class="text-primary font-bold uppercase tracking-widest mb-2">The Beginning</h5>
+            <h2 class="text-4xl font-heading font-bold text-dark mb-6">Born from a Passion for Detail</h2>
+            <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                Poseify started in 2023 with a simple mission: to create clothing that speaks louder than words. We believed that fashion shouldn"t just be about following trends, but about expressing individuality through impeccable tailoring and premium materials.
+            </p>
+            <p class="text-gray-600 text-lg leading-relaxed">
+                What began in a small studio has grown into a global brand, yet our core values remain unchanged. Every stitch tells a story of dedication, and every garment is designed to make you feel confident and unique.
+            </p>
+        </div>
+        <div class="reveal order-1 lg:order-2 relative aspect-[4/5] bg-gray-100 group">
+            <img src="{% static "img/service-1.jpg" %}" alt="Our Studio" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute -bottom-6 -left-6 w-full h-full border-2 border-primary -z-10 hidden lg:block"></div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
+        <div class="reveal relative aspect-[4/5] bg-gray-100 group">
+            <img src="{% static "img/service-2.jpg" %}" alt="Our Process" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute -top-6 -right-6 w-full h-full border-2 border-dark -z-10 hidden lg:block"></div>
+        </div>
+        
+        <div class="reveal">
+            <h5 class="text-primary font-bold uppercase tracking-widest mb-2">Our Philosophy</h5>
+            <h2 class="text-4xl font-heading font-bold text-dark mb-6">Sustainability Meets Style</h2>
+            <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                We believe that true luxury lies in sustainability. In an era of fast fashion, we choose to slow down. We source our fabrics from ethical suppliers and ensure that our production processes minimize environmental impact.
+            </p>
+            <ul class="space-y-4 mt-8">
+                <li class="flex items-start">
+                    <i class="fa fa-check text-primary mt-1 mr-3"></i>
+                    <span class="text-gray-700 font-medium">Ethically sourced materials</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa fa-check text-primary mt-1 mr-3"></i>
+                    <span class="text-gray-700 font-medium">Zero-waste production techniques</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa fa-check text-primary mt-1 mr-3"></i>
+                    <span class="text-gray-700 font-medium">Timeless designs meant to last</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
+        <div class="reveal order-2 lg:order-1">
+            <h5 class="text-primary font-bold uppercase tracking-widest mb-2">The Craft</h5>
+            <h2 class="text-4xl font-heading font-bold text-dark mb-6">Excellence in Every Thread</h2>
+            <p class="text-gray-600 text-lg leading-relaxed mb-8">
+                Our artisans are masters of their trade. From the initial sketch to the final button, every step involves rigorous quality control. We don"t just make clothes; we craft experiences that elevate your everyday life.
+            </p>
+            <a href="{% url "main:catalog_all" %}" class="inline-block bg-dark text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-primary transition-colors duration-300">
+                View Collection
+            </a>
+        </div>
+        <div class="reveal order-1 lg:order-2 relative aspect-[4/5] bg-gray-100 group">
+            <img src="{% static "img/service-3.jpg" %}" alt="Craftsmanship" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute -bottom-6 -left-6 w-full h-full border-2 border-primary -z-10 hidden lg:block"></div>
+        </div>
+    </div>
+
+    <div class="text-center mt-32 mb-16 reveal">
+        <h5 class="text-primary font-bold uppercase tracking-widest mb-2">The Team</h5>
+        <h2 class="text-4xl font-heading font-bold text-dark mb-12">Meet the Creators</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="group">
+                <div class="relative overflow-hidden mb-4 aspect-[3/4] bg-gray-100">
+                    <img src="{% static "img/team-1.jpg" %}" 
+                         alt="Alex Doe" 
+                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                </div>
+                <h4 class="text-xl font-heading font-bold text-dark">Alex Doe</h4>
+                <p class="text-primary text-sm uppercase tracking-wide">Founder & CEO</p>
+            </div>
+            
+            <div class="group">
+                <div class="relative overflow-hidden mb-4 aspect-[3/4] bg-gray-100">
+                    <img src="{% static "img/team-2.jpg" %}" 
+                         alt="Sarah Smith" 
+                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                </div>
+                <h4 class="text-xl font-heading font-bold text-dark">Sarah Smith</h4>
+                <p class="text-primary text-sm uppercase tracking-wide">Creative Director</p>
+            </div>
+
+            <div class="group">
+                <div class="relative overflow-hidden mb-4 aspect-[3/4] bg-gray-100">
+                    <img src="{% static "img/team-3.jpg" %}" 
+                         alt="Michael Brown" 
+                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                </div>
+                <h4 class="text-xl font-heading font-bold text-dark">Michael Brown</h4>
+                <p class="text-primary text-sm uppercase tracking-wide">Head of Design</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Animation initialisation function
+    function initScrollAnimation() {
+        const reveals = document.querySelectorAll(".reveal");
+
+        function checkScroll() {
+            // window.innerHeight (100% of the screen - as soon as the bottom of the screen touches the element)
+            const triggerBottom = window.innerHeight - 50; 
+
+            reveals.forEach(box => {
+                const boxTop = box.getBoundingClientRect().top;
+                if(boxTop < triggerBottom) {
+                    box.classList.add("active");
+                }
+            });
+        }
+
+        window.addEventListener("scroll", checkScroll);
+        checkScroll(); // start the check
+    }
+
+    // Launch when the page is fully loaded
+    document.addEventListener("DOMContentLoaded", initScrollAnimation);
+    
+    // Run after HTMX has replaced the content
+    document.addEventListener("htmx:afterSwap", function(event) {
+        initScrollAnimation();
+    });
+</script>
+{% endblock %}

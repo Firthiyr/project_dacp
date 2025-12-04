@@ -1,4 +1,4 @@
-{% extends 'main/base.html' %}
+{% extends base_template|default:"main/base.html" %}
 {% load static %}
 
 {% block title %}My Account - Poseify{% endblock %}
@@ -23,8 +23,8 @@
                 <div class="bg-white p-6 shadow-sm rounded-sm sticky top-24">
                     <ul class="space-y-4">
                         <li class="nav-item">
-                            <a href="{% url 'users:profile' %}" 
-                               hx-get="{% url 'users:account_details' %}" 
+                            <a href="{% url "users:profile" %}" 
+                               hx-get="{% url "users:account_details" %}" 
                                hx-target="#account-details-content" 
                                class="flex items-center text-primary font-bold text-sm tracking-wide uppercase border-l-4 border-primary pl-2 cursor-pointer transition-colors">
                                 Account Details
@@ -33,7 +33,7 @@
                         
                         <li class="nav-item">
                             <a href="#" 
-                            hx-get="{% url 'users:order_history' %}" 
+                            hx-get="{% url "users:order_history" %}" 
                             hx-target="#account-details-content" 
                             class="flex items-center text-gray-600 font-bold text-sm tracking-wide uppercase hover:text-primary transition-colors w-full text-left">
                                 Order History
@@ -41,7 +41,7 @@
                         </li>
                         
                         <li class="nav-item pt-4 border-t border-gray-100">
-                            <a href="{% url 'users:logout' %}" 
+                            <a href="{% url "users:logout" %}" 
                                class="flex items-center text-red-500 font-bold text-sm tracking-wide uppercase hover:text-red-700">
                                 Log Out
                             </a>
@@ -57,15 +57,18 @@
                         <h2 class="text-xl font-heading font-bold text-dark mb-4 tracking-wide uppercase border-b pb-2">
                             Latest Order
                         </h2>
-                        <p class="text-sm text-gray-500 mb-4">You haven't placed any orders yet.</p>
-                        <a href="{% url 'main:catalog_all' %}" 
-                           class="inline-block bg-dark text-white text-xs font-bold uppercase px-4 py-2 hover:bg-primary transition-colors">
+                        <p class="text-sm text-gray-500 mb-4">You haven"t placed any orders yet.</p>
+                        <a href="{% url "main:catalog_all" %}" 
+                        hx-get="{% url "main:catalog_all" %}" 
+                        hx-target="#main-content" 
+                        hx-push-url="true"
+                        class="inline-block bg-dark text-white text-xs font-bold uppercase px-4 py-2 hover:bg-primary transition-colors">
                             Shop Now
                         </a>
                     </div>
                     
                     <div class="bg-white p-6 shadow-sm rounded-sm" id="account-details-content">
-                        {% include 'users/partials/account_details.html' %}
+                        {% include "users/partials/account_details.html" %}
                     </div>
                 </div>
                 
@@ -86,7 +89,7 @@
                                 </div>
                                 <h3 class="text-sm font-bold text-dark uppercase mb-1">{{ product.name }}</h3>
                                 <p class="text-sm text-primary font-bold">${{ product.price }}</p>
-                                <a href="{% url 'main:product_detail' product.slug %}" 
+                                <a href="{% url "main:product_detail" product.slug %}" 
                                    class="mt-3 block text-center border border-dark text-dark text-xs font-bold uppercase py-2 hover:bg-dark hover:text-white transition-colors">
                                     View Product
                                 </a>

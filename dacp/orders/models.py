@@ -43,7 +43,7 @@ class Order(models.Model):
         return f"Order {self.id} by {self.email}"
 
 
-# Інлайн, для того щоб було видно скільки коштує то чи інший товар
+# Для того щоб було видно скільки коштує то чи інший товар
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

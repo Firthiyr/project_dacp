@@ -13,8 +13,8 @@
                             <p class="text-xs text-gray-500">{{ order.created_at|date:"F d, Y" }}</p>
                         </div>
                         <span class="mt-2 sm:mt-0 px-3 py-1 text-xs font-bold rounded-full 
-                            {% if order.status == 'completed' %}bg-green-100 text-green-800
-                            {% elif order.status == 'cancelled' %}bg-red-100 text-red-800
+                            {% if order.status == "completed" %}bg-green-100 text-green-800
+                            {% elif order.status == "cancelled" %}bg-red-100 text-red-800
                             {% else %}bg-yellow-100 text-yellow-800{% endif %}">
                             {{ order.get_status_display }}
                         </span>
@@ -24,7 +24,7 @@
                         <p class="text-sm font-medium text-gray-600">Total: <span class="text-dark font-bold">${{ order.total_price }}</span></p>
                         
                         <button 
-                            hx-get="{% url 'users:order_detail' order.id %}" 
+                            hx-get="{% url "users:order_detail" order.id %}" 
                             hx-target="#account-details-content" 
                             class="text-xs font-bold uppercase text-primary hover:text-dark transition-colors underline">
                             View Details
@@ -35,10 +35,10 @@
         </div>
     {% else %}
         <div class="text-center py-8">
-            <p class="text-gray-500 mb-4">You haven't placed any orders yet.</p>
+            <p class="text-gray-500 mb-4">You haven"t placed any orders yet.</p>
             <a 
-                href="{% url 'main:catalog_all' %}" 
-                hx-get="{% url 'main:catalog_all' %}" 
+                href="{% url "main:catalog_all" %}" 
+                hx-get="{% url "main:catalog_all" %}" 
                 hx-target="#main-content" 
                 hx-push-url="true"
                 class="inline-block bg-dark text-white text-xs font-bold uppercase px-6 py-3 hover:bg-primary transition-colors tracking-wider"

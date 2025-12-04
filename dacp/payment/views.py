@@ -15,8 +15,8 @@ import hashlib
 import base64
 
 # Create your views here.
-# stripe login
 # Для підключення stripe ввести у консоль cmd команду(перед цим зайти у папку де є stripe.exe):
+# stripe login
 # stripe listen --forward-to localhost:8000/payment/stripe/webhook/
 
 # Підключаємо stipe, інфа з сеттінгс
@@ -89,18 +89,18 @@ def stripe_webhook(request):
             order.save()
 
             for item in order.items.all():
-                product_size = item.size  # Получаем объект ProductSize
+                product_size = item.size
 
-                # Проверяем, есть ли еще товар (на всякий случай)
+                # Перевіряємо, чи є ще товар (про всяк випадок)
                 if product_size.stock >= item.quantity:
                     product_size.stock -= item.quantity
                     product_size.save()
                 else:
-                    # Логируем проблему: кто-то купил товара больше, чем было
+                    # Логіруємо проблему: якщо хтось купив товару більше, ніж було
                     print(
                         f"WARNING: Order {order.id} bought {item.quantity} of {product_size}, but stock was {product_size.stock}"
                     )
-                    # Все равно списываем (будет минус), или ставим 0 - зависит от бизнес-логики
+                    # Списуємо, або ставимо 0
                     product_size.stock = max(0, product_size.stock - item.quantity)
                     product_size.save()
         # Якщо замовлення не знайдено

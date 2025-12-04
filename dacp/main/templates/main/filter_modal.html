@@ -10,19 +10,19 @@
     </div>
 
     <form class="p-6 space-y-8" 
-          hx-get="{% if current_category %}{% url 'main:catalog' current_category.slug %}{% else %}{% url 'main:catalog_all' %}{% endif %}" 
+          hx-get="{% if current_category %}{% url "main:catalog" current_category.slug %}{% else %}{% url "main:catalog_all" %}{% endif %}" 
           hx-target="#main-content" 
           hx-push-url="true"
           hx-on::after-request="closeFilters()">
         
-        <input type="hidden" name="q" value="{{ filter_params.q|default:'' }}">
+        <input type="hidden" name="q" value="{{ filter_params.q|default:"" }}">
         
         <div>
             <h3 class="text-sm font-bold text-dark uppercase mb-3">Color</h3>
             <div class="relative">
                 <input type="text" 
                        name="color" 
-                       value="{{ filter_params.color|default:'' }}" 
+                       value="{{ filter_params.color|default:"" }}" 
                        placeholder="e.g. Red, Black..."
                        class="w-full border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-primary transition-colors">
             </div>
@@ -31,10 +31,10 @@
         <div>
             <h3 class="text-sm font-bold text-dark uppercase mb-3">Price Range</h3>
             <div class="flex items-center gap-4">
-                <input type="number" name="min_price" value="{{ filter_params.min_price|default:'' }}" placeholder="Min" 
+                <input type="number" name="min_price" value="{{ filter_params.min_price|default:"" }}" placeholder="Min" 
                        class="w-1/2 border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-primary">
                 <span class="text-gray-400">-</span>
-                <input type="number" name="max_price" value="{{ filter_params.max_price|default:'' }}" placeholder="Max" 
+                <input type="number" name="max_price" value="{{ filter_params.max_price|default:"" }}" placeholder="Max" 
                        class="w-1/2 border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-primary">
             </div>
         </div>
@@ -75,9 +75,9 @@
 
 <script>
     function closeFilters() {
-        const modal = document.getElementById('filter-modal-container');
+        const modal = document.getElementById("filter-modal-container");
         if (modal) {
-            modal.innerHTML = ''; // Очистка контейнера, скрывая модалку
+            modal.innerHTML = ""; // Cleaning the container, hiding the mod
         }
     }
 </script>

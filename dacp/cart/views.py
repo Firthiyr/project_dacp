@@ -51,7 +51,7 @@ class AddToCartView(CartMixin, View):
                 status=400,
             )
 
-        # Логіка выбору розміпу
+        # Логіка вbбору розміпу
         size_id = form.cleaned_data.get("size_id")
         if size_id:
             product_size = get_object_or_404(ProductSize, id=size_id, product=product)
@@ -71,7 +71,7 @@ class AddToCartView(CartMixin, View):
                 {"error": f"Only {product_size.stock} items available"}, status=400
             )
 
-        # Перевірка: чи єтовар у корзині?
+        # Перевірка, чи єтовар у корзині?
         existing_item = cart.items.filter(
             product=product,
             product_size=product_size,

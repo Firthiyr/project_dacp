@@ -2,9 +2,9 @@
 
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <nav class="flex items-center text-sm text-gray-500 mb-8 uppercase tracking-wider">
-        <a href="{% url 'main:index' %}" class="hover:text-primary transition-colors">Home</a>
+        <a href="{% url "main:index" %}" class="hover:text-primary transition-colors">Home</a>
         <span class="mx-2">/</span>
-        <a href="{% url 'cart:cart_modal' %}" class="hover:text-primary transition-colors">Cart</a>
+        <a href="{% url "cart:cart_modal" %}" class="hover:text-primary transition-colors">Cart</a>
         <span class="mx-2">/</span>
         <span class="text-dark font-bold">Checkout</span>
     </nav>
@@ -27,7 +27,7 @@
 
             <form method="post" 
                 id="order-form" 
-                hx-post="{% url 'orders:checkout' %}" 
+                hx-post="{% url "orders:checkout" %}" 
                 hx-target="#main-content" 
                 hx-swap="innerHTML"
                 class="space-y-8">
@@ -130,7 +130,7 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <button type="submit"
-                                onclick="document.getElementById('payment_provider').value='stripe'"
+                                onclick="document.getElementById("payment_provider").value="stripe""
                                 class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-bold text-white bg-[#635BFF] hover:bg-[#4B45C6] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md">
                             <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                                 <i class="fab fa-stripe text-3xl"></i>
@@ -139,7 +139,7 @@
                         </button>
                         
                         <!--<button type="submit"
-                                onclick="document.getElementById('payment_provider').value='heleket'"
+                                onclick="document.getElementById("payment_provider").value="heleket""
                                 class="group relative w-full flex justify-center py-4 px-4 border border-dark text-sm font-bold text-dark bg-white hover:bg-dark hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-dark shadow-sm">
                             <span class="uppercase tracking-wider mt-1">Pay with Heleket</span>
                         </button>-->
@@ -209,12 +209,12 @@
 </div>
 
 <script>
-    // Простая валидация на клиенте перед отправкой
-    document.getElementById('order-form').addEventListener('submit', function(e) {
-        const provider = document.getElementById('payment_provider').value;
+    // Simple validation on the client side before sending
+    document.getElementById("order-form").addEventListener("submit", function(e) {
+        const provider = document.getElementById("payment_provider").value;
         if (!provider) {
             e.preventDefault();
-            alert('Please select a payment method.');
+            alert("Please select a payment method.");
         }
     });
 </script>

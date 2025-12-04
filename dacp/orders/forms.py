@@ -127,7 +127,6 @@ class OrderForm(forms.Form):
             self.fields["postal_code"].initial = user.postal_code
             self.fields["phone"].initial = user.phone
 
-    # Надає необхідний вид для правильної роботи коду
     def clean(self):
         cleaned_data = super().clean()
         for field in [

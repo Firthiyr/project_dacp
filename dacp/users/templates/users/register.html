@@ -1,11 +1,11 @@
-{% extends 'main/base.html' %}
+{% extends base_template|default:"main/base.html" %}
 {% load static %}
 
 {% block title %}Create Account - Poseify{% endblock %}
 
 {% block content %}
 <style>
-    /* Стили для полей ввода (как в login.html) */
+    /* Стилі для полів введення */
     .dotted-input {
         border: none;
         border-bottom: 2px dotted #d1d5db;
@@ -22,7 +22,7 @@
         text-transform: uppercase;
         font-size: 0.875rem;
     }
-    /* Подсветка родительского контейнера при фокусе */
+    /* Підсвічування батьківського контейнера при фокусі */
     .input-group.focused .dotted-input {
         border-bottom-color: #111; 
     }
@@ -46,7 +46,7 @@
 
         <form id="createAccountForm" 
               method="post" 
-              action="{% url 'users:register' %}"
+              action="{% url "users:register" %}"
               class="mt-8 space-y-6">
             {% csrf_token %}
             
@@ -95,7 +95,7 @@
                     Create
                 </button>
                 
-                <a href="{% url 'users:login' %}"
+                <a href="{% url "users:login" %}"
                    class="w-full flex justify-center py-3 px-4 border-2 border-gray-300 text-sm font-bold text-gray-700 bg-transparent hover:border-dark hover:text-dark transition-colors duration-300 uppercase tracking-wider text-center">
                     Log In
                 </a>
@@ -105,11 +105,11 @@
 </div>
 
 <script>
-    // 1. Валидация совпадения паролей на лету
-    const form = document.getElementById('createAccountForm');
-    const passwordInput = document.getElementById('id_password1'); // Django дает id: id_названиеполя
-    const confirmPasswordInput = document.getElementById('id_password2');
-    const passwordError = document.getElementById('passwordError');
+    // Валідація збігу паролів миттєво спрацьовує
+    const form = document.getElementById("createAccountForm");
+    const passwordInput = document.getElementById("id_password1"); // Django дає id: id_назваполя
+    const confirmPasswordInput = document.getElementById("id_password2");
+    const passwordError = document.getElementById("passwordError");
 
     function validatePasswords() {
         if (!passwordInput || !confirmPasswordInput) return true;
@@ -118,41 +118,41 @@
         const confirmPassword = confirmPasswordInput.value;
         
         if (confirmPassword && password !== confirmPassword) {
-            passwordError.classList.remove('hidden');
-            confirmPasswordInput.style.borderBottomColor = 'red';
+            passwordError.classList.remove("hidden");
+            confirmPasswordInput.style.borderBottomColor = "red";
             return false;
         } else {
-            passwordError.classList.add('hidden');
-            confirmPasswordInput.style.borderBottomColor = ''; // Сброс
+            passwordError.classList.add("hidden");
+            confirmPasswordInput.style.borderBottomColor = ""; // Reset
             return true;
         }
     }
 
     if (confirmPasswordInput && passwordInput) {
-        confirmPasswordInput.addEventListener('input', validatePasswords);
-        passwordInput.addEventListener('input', () => {
+        confirmPasswordInput.addEventListener("input", validatePasswords);
+        passwordInput.addEventListener("input", () => {
             if (confirmPasswordInput.value) {
                 validatePasswords();
             }
         });
     }
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener("submit", function(e) {
         if (!validatePasswords()) {
-            e.preventDefault(); // Остановить отправку, если пароли не совпадают
+            e.preventDefault(); // Stop sending if passwords do not match
         }
     });
 
-    // 2. Эффект фокуса для полей
-    document.querySelectorAll('.dotted-input').forEach(input => {
-        input.addEventListener('focus', function() {
-            if(this.parentElement.classList.contains('input-group')) {
-                this.parentElement.classList.add('focused');
+    // Ефект для полів 
+    document.querySelectorAll(".dotted-input").forEach(input => {
+        input.addEventListener("focus", function() {
+            if(this.parentElement.classList.contains("input-group")) {
+                this.parentElement.classList.add("focused");
             }
         });
-        input.addEventListener('blur', function() {
-            if(this.parentElement.classList.contains('input-group')) {
-                this.parentElement.classList.remove('focused');
+        input.addEventListener("blur", function() {
+            if(this.parentElement.classList.contains("input-group")) {
+                this.parentElement.classList.remove("focused");
             }
         });
     });

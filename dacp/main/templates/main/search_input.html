@@ -4,9 +4,9 @@
            id="search-input" 
            name="q" 
            placeholder="Search..." 
-           value="{{ search_query|default:'' }}"
+           value="{{ search_query|default:"" }}"
            class="bg-transparent border-none outline-none text-sm text-white w-48 transition-all placeholder-gray-500"
-           hx-get="{% url 'main:catalog_all' %}" 
+           hx-get="{% url "main:catalog_all" %}" 
            hx-target="#main-content" 
            hx-push-url="true"
            hx-trigger="input delay:500ms changed"
@@ -14,22 +14,22 @@
            autocomplete="off">
 
     <button class="ml-2 text-gray-500 hover:text-primary transition-colors focus:outline-none"
-            hx-get="{% url 'main:catalog_all' %}?reset_search=true" 
+            hx-get="{% url "main:catalog_all" %}?reset_search=true" 
             hx-target="#search-wrapper"
             hx-swap="innerHTML"
-            hx-on::before-request="document.getElementById('search-input').value = ''">
+            hx-on::before-request="document.getElementById("search-input").value = """>
         <i class="fa fa-times"></i>
     </button>
 </div>
 
 <script>
     setTimeout(() => {
-        const input = document.getElementById('search-input');
+        const input = document.getElementById("search-input");
         if(input) {
             input.focus();
-            // Курсор в конец текста, если там что-то есть
+            // Move cursor to the end of the text, if ыsomething is there
             const val = input.value;
-            input.value = '';
+            input.value = "";
             input.value = val;
         }
     }, 50);

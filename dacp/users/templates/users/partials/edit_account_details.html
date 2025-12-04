@@ -4,7 +4,7 @@
     </h2>
 
     <form method="post" 
-          hx-post="{% url 'users:update_account_details' %}" 
+          hx-post="{% url "users:update_account_details" %}" 
           hx-target="#account-details-content"
           class="space-y-5">
         {% csrf_token %}
@@ -79,7 +79,7 @@
             </button>
             <button 
                 type="button"
-                hx-get="{% url 'users:account_details' %}" 
+                hx-get="{% url "users:account_details" %}" 
                 hx-target="#account-details-content" 
                 class="border border-gray-300 text-gray-600 text-xs font-bold uppercase px-6 py-3 hover:border-dark hover:text-dark transition-colors tracking-wider"
             >
